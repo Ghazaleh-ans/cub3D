@@ -1,0 +1,14 @@
+NO ./textures/Brick64x64.xpm
+SO ./textures/beautiful_brick_south.xpm
+WE ./textures/beautiful_brick_west.xpm
+EA ./textures/beautiful_brick_east.xpm
+F 245,245,220
+C 139,69,19
+
+1111111
+1000001
+1000001
+100N001
+1000001
+1000001
+1111111
