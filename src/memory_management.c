@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:19:37 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 14:19:39 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/11 21:22:23 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,14 @@ void	destroy_mlx_images(t_game_map *game_map)
 		texture_index++;
 	}
 	
+	#ifdef BONUS
 	/* Destroy minimap image */
 	if (game_map->minimap_image.mlx_image_ptr)
 	{
 		mlx_destroy_image(game_map->mlx_instance, game_map->minimap_image.mlx_image_ptr);
 		game_map->minimap_image.mlx_image_ptr = NULL;
 	}
+	#endif
 }
 
 /* ************************************************************************** */

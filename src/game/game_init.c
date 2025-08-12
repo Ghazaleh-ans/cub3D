@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:49:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 14:49:02 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/11 21:23:27 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,9 +178,10 @@ void	initialize_mlx_images(t_game_map *game_map)
 }
 
 /* ************************************************************************** */
-/*                           MINIMAP INITIALIZATION                          */
+/*                           MINIMAP INITIALIZATION (BONUS)                 */
 /* ************************************************************************** */
 
+#ifdef BONUS
 /**
  * @brief Initialize the minimap display system
  * 
@@ -225,6 +226,7 @@ static void	initialize_minimap_system(t_game_map *game_map)
 	/* Draw initial minimap content */
 	draw_minimap_display(game_map);
 }
+#endif
 
 /* ************************************************************************** */
 /*                           MAIN INITIALIZATION FUNCTION                    */
@@ -266,8 +268,10 @@ int	initialize_game_engine(t_game_map *game_map)
 	/* Initialize all images and textures */
 	initialize_mlx_images(game_map);
 	
-	/* Initialize minimap system */
+	#ifdef BONUS
+	/* Initialize minimap system (bonus feature) */
 	initialize_minimap_system(game_map);
+	#endif
 	
 	/* Set up event handlers */
 	mlx_loop_hook(game_map->mlx_instance, &render_frame, game_map);

@@ -6,14 +6,14 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:30:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 13:31:11 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/12 11:48:14 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
 /* ************************************************************************** */
-/*                           FILE VALIDATION                                  */
+/*                           FILE VALIDATION                                 */
 /* ************************************************************************** */
 
 /**
@@ -109,7 +109,7 @@ int	validate_input_file(char *filename)
 }
 
 /* ************************************************************************** */
-/*                         STRUCTURE INITIALIZATION                           */
+/*                         STRUCTURE INITIALIZATION                          */
 /* ************************************************************************** */
 
 /**
@@ -154,13 +154,14 @@ void	initialize_game_structure(t_game_map *game_map)
 		game_map->texture_images[texture_index].texture_path = NULL;
 		texture_index++;
 	}
-	
+	#ifdef BONUS
 	/* Initialize minimap */
 	game_map->minimap_image.mlx_image_ptr = NULL;
+	#endif
 }
 
 /* ************************************************************************** */
-/*                              MAIN FUNCTION                                 */
+/*                              MAIN FUNCTION                               */
 /* ************************************************************************** */
 
 /**

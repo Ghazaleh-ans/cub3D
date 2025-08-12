@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 13:29:18 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/11 21:20:56 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -469,9 +469,10 @@ int		create_trgb_color(int transparency, int red, int green, int blue);
 void	render_background_colors(t_map *map);
 
 /* ========================================================================== */
-/*                              MINIMAP FUNCTIONS                            */
+/*                              MINIMAP FUNCTIONS (BONUS)                   */
 /* ========================================================================== */
 
+#ifdef BONUS
 /**
  * @brief Draw the complete minimap
  * @param map Pointer to the main game structure
@@ -503,5 +504,6 @@ void	put_pixel_to_minimap(t_map *map, int x, int y, int color);
  * @param color Color to fill the case
  */
 void	draw_minimap_case(t_map *map, int x, int y, int color);
+#endif
 
 #endif

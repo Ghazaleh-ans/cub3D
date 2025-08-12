@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:51:12 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 14:51:14 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/11 21:24:17 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,18 @@ void	move_player_with_collision(t_game_map *game_map, double delta_x,
 			game_map->player_pos_y -= delta_y;
 	}
 	
-	/* Update minimap if player changed grid position */
+	/* Update minimap if player changed grid position (bonus feature) */
+	#ifdef BONUS
 	if ((int)game_map->player_pos_x != previous_grid_x || 
 		(int)game_map->player_pos_y != previous_grid_y)
 	{
 		update_minimap_player_position(game_map, previous_grid_x, previous_grid_y);
 	}
+	#else
+	/* Suppress unused variable warning in mandatory version */
+	(void)previous_grid_x;
+	(void)previous_grid_y;
+	#endif
 }
 
 /* ************************************************************************** */
