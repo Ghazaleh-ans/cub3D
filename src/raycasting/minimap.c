@@ -6,14 +6,16 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:53:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 14:53:02 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/11 21:25:34 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
+#ifdef BONUS
+
 /* ************************************************************************** */
-/*                           MINIMAP RENDERING                               */
+/*                           MINIMAP RENDERING (BONUS)                       */
 /* ************************************************************************** */
 
 /**
@@ -186,3 +188,5 @@ void	draw_minimap_case(t_game_map *game_map, int start_x, int start_y, int color
 		pixel_row++;
 	}
 }
+
+#endif /* BONUS */

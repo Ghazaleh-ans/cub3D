@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:51:56 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 14:51:57 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/11 21:24:54 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,12 @@
  * 1. Clear the screen with floor and ceiling colors
  * 2. Execute ray-casting to render 3D walls
  * 3. Display the rendered frame to the window
- * 4. Overlay the minimap for navigation aid
+ * 4. Overlay the minimap for navigation aid (bonus only)
  * 
  * The rendering order is critical:
  * - Background first (floor/ceiling)
  * - Walls second (3D geometry)
- * - UI elements last (minimap)
+ * - UI elements last (minimap, bonus only)
  * 
  * This function is called by MLX in the main loop for continuous rendering.
  * 
@@ -47,9 +47,11 @@ int	render_frame(t_game_map *game_map)
 	mlx_put_image_to_window(game_map->mlx_instance, game_map->mlx_window, 
 		game_map->texture_images[4].mlx_image_ptr, 0, 0);
 	
-	/* Overlay minimap in the top-left corner */
+	#ifdef BONUS
+	/* Overlay minimap in the top-left corner (bonus feature) */
 	mlx_put_image_to_window(game_map->mlx_instance, game_map->mlx_window,
 		game_map->minimap_image.mlx_image_ptr, MINIMAP_OFFSET, MINIMAP_OFFSET);
+	#endif
 	
 	return (0);
 }

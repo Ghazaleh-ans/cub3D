@@ -6,16 +6,12 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:54:13 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 21:10:48 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/11 21:17:49 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GAME_STRUCT_H
 # define GAME_STRUCT_H
-
-/* ************************************************************************** */
-/*                           STRUCTURE DEFINITIONS                            */
-/* ************************************************************************** */
 
 /**
  * @brief Image structure for MLX image handling
@@ -47,7 +43,10 @@ typedef struct s_game_map
 	void			*mlx_instance;		/* MLX instance pointer */
 	void			*mlx_window;		/* MLX window pointer */
 	t_image_data	texture_images[5];	/* Array of texture images [N,S,W,E,Display] */
-	t_image_data	minimap_image;		/* Minimap image data */
+	
+	#ifdef BONUS
+	t_image_data	minimap_image;		/* Minimap image data (bonus feature) */
+	#endif
 	
 	/* ========================== DISPLAY SETTINGS =========================== */
 	int				display_width;		/* Window width in pixels */

@@ -1,4 +1,3 @@
-
 # Program name
 NAME			= cub3D
 
@@ -32,11 +31,18 @@ GAME_FILES		= game/game_init.c \
 RAYCAST_FILES	= raycasting/raycasting.c \
 				  raycasting/raycasting_utils.c \
 				  raycasting/rendering.c \
-				  raycasting/drawing.c \
-				  raycasting/minimap.c
+				  raycasting/drawing.c
+
+# Bonus files (minimap is bonus feature)
+BONUS_FILES		= raycasting/minimap.c
 
 # All source files
 SRCS			= $(addprefix $(SRC_DIR)/, $(MAIN_FILES) $(PARSING_FILES) $(GAME_FILES) $(RAYCAST_FILES))
+
+# Add bonus files when bonus flag is set
+ifdef BONUS
+	SRCS		+= $(addprefix $(SRC_DIR)/, $(BONUS_FILES))
+endif
 
 # Object files
 OBJS			= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
@@ -133,8 +139,8 @@ fclean: clean
 re: fclean all
 
 # Bonus target (with additional features)
-bonus: CFLAGS += -DBONUS
-bonus: all
+bonus: 
+	@$(MAKE) BONUS=1 CFLAGS="$(CFLAGS) -DBONUS"
 	@echo "$(MAGENTA)$(SUCCESS) Bonus features enabled!$(RESET)"
 
 # Debug target with additional debugging flags
