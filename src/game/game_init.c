@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:49:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 13:19:15 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/12 17:52:49 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,33 +18,19 @@
 
 /**
  * @brief Handle game initialization errors with proper cleanup
- * 
- * This function provides centralized error handling for game initialization
- * failures. It performs comprehensive cleanup of all allocated resources
- * including MLX resources, textures, map data, and memory allocations.
- * 
- * The cleanup order is critical to prevent crashes:
- * 1. Display error message
- * 2. Free texture paths and map data
- * 3. Destroy MLX images
- * 4. Destroy MLX window and display
- * 5. Exit program
- * 
- * @param game_map Pointer to the main game structure
- * @param error_message Descriptive error message to display
  */
-void	handle_game_error(t_game_map *game_map, char *error_message)
+void	handle_game_error(t_game *game, char *error_message)
 {
 	ft_printf("%s", error_message);
-	free_texture_paths(game_map);
-	free_string_array(game_map->map_grid);
-	destroy_mlx_images(game_map);
-	if (game_map->mlx_window && game_map->mlx_instance)
-		mlx_destroy_window(game_map->mlx_instance, game_map->mlx_window);
-	if (game_map->mlx_instance)
+	free_texture_paths(game);
+	free_string_array(game->map.grid);
+	destroy_mlx_images(game);
+	if (game->mlx.window && game->mlx.instance)
+		mlx_destroy_window(game->mlx.instance, game->mlx.window);
+	if (game->mlx.instance)
 	{
-		mlx_destroy_display(game_map->mlx_instance);
-		free(game_map->mlx_instance);
+		mlx_destroy_display(game->mlx.instance);
+		free(game->mlx.instance);
 	}
 	exit(EXIT_FAILURE);
 }
@@ -55,44 +41,35 @@ void	handle_game_error(t_game_map *game_map, char *error_message)
 
 /**
  * @brief Initialize game-specific settings and player camera
- * 
- * This function sets up the core game parameters:
- * - Movement and rotation speeds for responsive controls
- * - Display dimensions for window size
- * - Camera plane orientation based on initial player direction
- * 
- * The camera plane determines the field of view (FOV):
- * - Plane length of 0.66 creates approximately 60-degree FOV
- * - Plane is perpendicular to player direction vector
- * - Plane orientation depends on initial player facing direction
- * 
- * @param game_map Pointer to the main game structure
  */
-void	initialize_game_statistics(t_game_map *game_map)
+void	init_game_settings(t_game *game)
 {
-	game_map->movement_speed = MOVE_SPEED;
-	game_map->rotation_speed = ROTATION_SPEED;
-	game_map->display_width = DEFAULT_WIDTH;
-	game_map->display_height = DEFAULT_HEIGHT;
-	if (game_map->player_direction == 'N')
+	/* Set movement and display parameters */
+	game->player.move_speed = MOVE_SPEED;
+	game->player.rotate_speed = ROTATION_SPEED;
+	game->mlx.width = DEFAULT_WIDTH;
+	game->mlx.height = DEFAULT_HEIGHT;
+	
+	/* Set camera plane based on initial player direction */
+	if (game->player.initial_dir == 'N')
 	{
-		game_map->camera_plane_x = 0.66;
-		game_map->camera_plane_y = 0.0;
+		game->player.plane_x = 0.66;
+		game->player.plane_y = 0.0;
 	}
-	else if (game_map->player_direction == 'S')
+	else if (game->player.initial_dir == 'S')
 	{
-		game_map->camera_plane_x = -0.66;
-		game_map->camera_plane_y = 0.0;
+		game->player.plane_x = -0.66;
+		game->player.plane_y = 0.0;
 	}
-	else if (game_map->player_direction == 'W')
+	else if (game->player.initial_dir == 'W')
 	{
-		game_map->camera_plane_x = 0.0;
-		game_map->camera_plane_y = 0.66;
+		game->player.plane_x = 0.0;
+		game->player.plane_y = 0.66;
 	}
-	else if (game_map->player_direction == 'E')
+	else if (game->player.initial_dir == 'E')
 	{
-		game_map->camera_plane_x = 0.0;
-		game_map->camera_plane_y = -0.66;
+		game->player.plane_x = 0.0;
+		game->player.plane_y = -0.66;
 	}
 }
 
@@ -101,58 +78,46 @@ void	initialize_game_statistics(t_game_map *game_map)
 /* ************************************************************************** */
 
 /**
- * @brief Initialize all MLX images including textures and display buffer
- * 
- * This function loads and initializes all graphical assets:
- * 1. Load wall textures from XPM files (North, South, West, East)
- * 2. Create main display buffer for rendering
- * 3. Initialize image data addresses for direct pixel access
- * 4. Validate all operations for error handling
- * 
- * The texture loading order corresponds to the direction enum:
- * - Index 0: North texture
- * - Index 1: South texture  
- * - Index 2: West texture
- * - Index 3: East texture
- * - Index 4: Display buffer
- * 
- * @param game_map Pointer to the main game structure
+ * @brief Load a single texture image
  */
-void	initialize_mlx_images(t_game_map *game_map)
+static void	load_texture_image(t_game *game, t_image *texture)
 {
-	int	texture_index;
-
-	texture_index = 0;
-
-	while (texture_index < 4)
-	{
-		game_map->texture_images[texture_index].mlx_image_ptr = 
-			mlx_xpm_file_to_image(game_map->mlx_instance, 
-				game_map->texture_images[texture_index].texture_path,
-				&game_map->texture_images[texture_index].image_width, 
-				&game_map->texture_images[texture_index].image_height);
-		if (!game_map->texture_images[texture_index].mlx_image_ptr)
-			handle_game_error(game_map, "Error\nFailed to load texture file\n");
-		texture_index++;
-	}
-	game_map->texture_images[4].mlx_image_ptr = mlx_new_image(game_map->mlx_instance,
-		game_map->display_width, game_map->display_height);
-	if (!game_map->texture_images[4].mlx_image_ptr)
-		handle_game_error(game_map, "Error\nFailed to create display buffer\n");
-	texture_index = 0;
-	while (texture_index < 5)
-	{
-		game_map->texture_images[texture_index].image_buffer = 
-			mlx_get_data_addr(game_map->texture_images[texture_index].mlx_image_ptr,
-				&game_map->texture_images[texture_index].bits_per_pixel,
-				&game_map->texture_images[texture_index].line_length,
-				&game_map->texture_images[texture_index].endianness);
+	if (!texture->path)
+		return;
 		
-		if (!game_map->texture_images[texture_index].image_buffer)
-			handle_game_error(game_map, "Error\nFailed to get image data address\n");
+	texture->mlx_ptr = mlx_xpm_file_to_image(game->mlx.instance, 
+		texture->path, &texture->width, &texture->height);
+	if (!texture->mlx_ptr)
+		handle_game_error(game, "Error\nFailed to load texture file\n");
 		
-		texture_index++;
-	}
+	texture->data = mlx_get_data_addr(texture->mlx_ptr,
+		&texture->bits_per_pixel, &texture->line_length, &texture->endian);
+	if (!texture->data)
+		handle_game_error(game, "Error\nFailed to get texture data address\n");
+}
+
+/**
+ * @brief Initialize all MLX images including textures and display buffer
+ */
+void	init_mlx_images(t_game *game)
+{
+	/* Load wall textures */
+	load_texture_image(game, &game->textures.north);
+	load_texture_image(game, &game->textures.south);
+	load_texture_image(game, &game->textures.east);
+	load_texture_image(game, &game->textures.west);
+	
+	/* Create main display buffer */
+	game->textures.screen.mlx_ptr = mlx_new_image(game->mlx.instance,
+		game->mlx.width, game->mlx.height);
+	if (!game->textures.screen.mlx_ptr)
+		handle_game_error(game, "Error\nFailed to create display buffer\n");
+		
+	game->textures.screen.data = mlx_get_data_addr(game->textures.screen.mlx_ptr,
+		&game->textures.screen.bits_per_pixel, &game->textures.screen.line_length,
+		&game->textures.screen.endian);
+	if (!game->textures.screen.data)
+		handle_game_error(game, "Error\nFailed to get screen buffer data address\n");
 }
 
 /* ************************************************************************** */
@@ -162,39 +127,27 @@ void	initialize_mlx_images(t_game_map *game_map)
 #ifdef BONUS
 /**
  * @brief Initialize the minimap display system
- * 
- * This function creates and sets up the minimap functionality:
- * 1. Calculate minimap dimensions based on map size and scale
- * 2. Create MLX image for minimap rendering
- * 3. Initialize image data address for pixel access
- * 4. Draw initial minimap content
- * 
- * The minimap provides real-time navigation aid by showing:
- * - Map layout with walls and open spaces
- * - Player position and orientation
- * - Scaled representation for easy viewing
- * 
- * @param game_map Pointer to the main game structure
  */
-static void	initialize_minimap_system(t_game_map *game_map)
+static void	init_minimap_system(t_game *game)
 {
 	int	minimap_width;
 	int	minimap_height;
 
-	minimap_width = game_map->map_width * MINIMAP_SCALE;
-	minimap_height = game_map->map_height * MINIMAP_SCALE;
-	game_map->minimap_image.mlx_image_ptr = mlx_new_image(game_map->mlx_instance,
+	minimap_width = game->map.width * MINIMAP_SCALE;
+	minimap_height = game->map.height * MINIMAP_SCALE;
+	
+	game->textures.minimap.mlx_ptr = mlx_new_image(game->mlx.instance,
 		minimap_width, minimap_height);
-	if (!game_map->minimap_image.mlx_image_ptr)
-		handle_game_error(game_map, "Error\nFailed to create minimap\n");
-	game_map->minimap_image.image_buffer = 
-		mlx_get_data_addr(game_map->minimap_image.mlx_image_ptr,
-			&game_map->minimap_image.bits_per_pixel,
-			&game_map->minimap_image.line_length,
-			&game_map->minimap_image.endianness);
-	if (!game_map->minimap_image.image_buffer)
-		handle_game_error(game_map, "Error\nFailed to initialize minimap data\n");
-	draw_minimap_display(game_map);
+	if (!game->textures.minimap.mlx_ptr)
+		handle_game_error(game, "Error\nFailed to create minimap\n");
+		
+	game->textures.minimap.data = mlx_get_data_addr(game->textures.minimap.mlx_ptr,
+		&game->textures.minimap.bits_per_pixel, &game->textures.minimap.line_length,
+		&game->textures.minimap.endian);
+	if (!game->textures.minimap.data)
+		handle_game_error(game, "Error\nFailed to initialize minimap data\n");
+		
+	draw_minimap_display(game);
 }
 #endif
 
@@ -204,39 +157,40 @@ static void	initialize_minimap_system(t_game_map *game_map)
 
 /**
  * @brief Main game engine initialization function
- * 
- * This function orchestrates the complete game initialization process:
- * 1. Initialize game statistics and camera settings
- * 2. Create MLX instance and window
- * 3. Load textures and create display buffer
- * 4. Initialize minimap system
- * 5. Set up event handlers for input and rendering
- * 6. Start the main game loop
- * 
- * The initialization follows a strict order to ensure all dependencies
- * are properly established before starting the game loop.
- * 
- * @param game_map Pointer to the main game structure
- * @return 0 on successful initialization and game loop start
  */
-int	initialize_game_engine(t_game_map *game_map)
+int	init_game_engine(t_game *game)
 {
-	initialize_game_statistics(game_map);
-	game_map->mlx_instance = mlx_init();
-	if (!game_map->mlx_instance)
-		handle_game_error(game_map, "Error\nFailed to initialize MLX\n");
-	game_map->mlx_window = mlx_new_window(game_map->mlx_instance, 
-		game_map->display_width, game_map->display_height, "cub3D");
-	if (!game_map->mlx_window)
-		handle_game_error(game_map, "Error\nFailed to create game window\n");
-	initialize_mlx_images(game_map);
+	/* Initialize game settings and player camera */
+	init_game_settings(game);
+	
+	/* Create MLX instance and window */
+	game->mlx.instance = mlx_init();
+	if (!game->mlx.instance)
+		handle_game_error(game, "Error\nFailed to initialize MLX\n");
+		
+	game->mlx.window = mlx_new_window(game->mlx.instance, 
+		game->mlx.width, game->mlx.height, "cub3D");
+	if (!game->mlx.window)
+		handle_game_error(game, "Error\nFailed to create game window\n");
+	
+	/* Load textures and create display buffer */
+	init_mlx_images(game);
+	
 	#ifdef BONUS
-	initialize_minimap_system(game_map);
+	/* Initialize minimap system */
+	init_minimap_system(game);
 	#endif
-	mlx_loop_hook(game_map->mlx_instance, &render_frame, game_map);
-	mlx_hook(game_map->mlx_window, 2, 1L << 0, handle_keyboard_input, game_map);
-	mlx_hook(game_map->mlx_window, 6, 1L << 6, handle_mouse_rotation, game_map);
-	mlx_hook(game_map->mlx_window, 17, 1L << 0, clean_exit_program, game_map);
-	mlx_loop(game_map->mlx_instance);
+	
+	/* Set up event handlers and start main loop */
+	mlx_loop_hook(game->mlx.instance, &render_frame, game);
+	mlx_hook(game->mlx.window, 2, 1L << 0, handle_keyboard_input, game);
+	#ifdef BONUS
+	mlx_hook(game->mlx.window, 6, 1L << 6, handle_mouse_rotation, game);
+	#endif
+	mlx_hook(game->mlx.window, 17, 1L << 0, clean_exit_program, game);
+	
+	/* Start the game loop */
+	mlx_loop(game->mlx.instance);
+	
 	return (0);
 }

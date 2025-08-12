@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:30:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 12:40:18 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/12 17:10:19 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,41 +68,61 @@ int	validate_input_file(char *filename)
 	return (1);
 }
 
-void	initialize_game_structure(t_game_map *game_map)
+void	init_game_structure(t_game *game)
 {
-	int	texture_index;
+	/* Initialize MLX data */
+	game->mlx.instance = NULL;
+	game->mlx.window = NULL;
+	game->mlx.width = 0;
+	game->mlx.height = 0;
 
-	game_map->mlx_instance = NULL;
-	game_map->mlx_window = NULL;
-	game_map->map_grid = NULL;
-	game_map->map_width = 0;
-	game_map->map_height = 0;
-	game_map->floor_color_rgb[0] = -1;
-	game_map->floor_color_rgb[1] = -1;
-	game_map->floor_color_rgb[2] = -1;
-	game_map->ceiling_color_rgb[0] = -1;
-	game_map->ceiling_color_rgb[1] = -1;
-	game_map->ceiling_color_rgb[2] = -1;
-	game_map->current_line = NULL;
-	game_map->map_data_buffer = NULL;
-	texture_index = 0;
-	while (texture_index < 5)
-	{
-		game_map->texture_images[texture_index].mlx_image_ptr = NULL;
-		game_map->texture_images[texture_index].texture_path = NULL;
-		texture_index++;
-	}
+	/* Initialize map data */
+	game->map.grid = NULL;
+	game->map.width = 0;
+	game->map.height = 0;
+	game->map.floor_rgb[0] = -1;
+	game->map.floor_rgb[1] = -1;
+	game->map.floor_rgb[2] = -1;
+	game->map.ceiling_rgb[0] = -1;
+	game->map.ceiling_rgb[1] = -1;
+	game->map.ceiling_rgb[2] = -1;
+	game->map.current_line = NULL;
+	game->map.data_buffer = NULL;
+
+	/* Initialize player data */
+	game->player.pos_x = 0.0;
+	game->player.pos_y = 0.0;
+	game->player.dir_x = 0.0;
+	game->player.dir_y = 0.0;
+	game->player.plane_x = 0.0;
+	game->player.plane_y = 0.0;
+	game->player.initial_dir = '\0';
+	game->player.move_speed = 0.0;
+	game->player.rotate_speed = 0.0;
+
+	/* Initialize textures */
+	game->textures.north.mlx_ptr = NULL;
+	game->textures.north.path = NULL;
+	game->textures.south.mlx_ptr = NULL;
+	game->textures.south.path = NULL;
+	game->textures.east.mlx_ptr = NULL;
+	game->textures.east.path = NULL;
+	game->textures.west.mlx_ptr = NULL;
+	game->textures.west.path = NULL;
+	game->textures.screen.mlx_ptr = NULL;
+	game->textures.screen.path = NULL;
+
 	#ifdef BONUS
-	game_map->minimap_image.mlx_image_ptr = NULL;
+	game->textures.minimap.mlx_ptr = NULL;
 	#endif
 }
 
 int	main(int argc, char **argv)
 {
-	t_game_map	game_map;
-	int			fd;
+	t_game	game;
+	int		fd;
 
-	initialize_game_structure(&game_map);
+	init_game_structure(&game);
 	if (argc != 2)
 	{
 		ft_printf("Error\nUsage: %s <map_file.cub>\n", argv[0]);
@@ -117,18 +137,18 @@ int	main(int argc, char **argv)
 		ft_printf("Error\nFailed to open file for parsing: %s\n", argv[1]);
 		return (3);
 	}
-	if (!parse_map_file(&game_map, fd))
+	if (!parse_map_file(&game, fd))
 	{
 		ft_printf("Error\nMap parsing failed\n");
-		free_string_array(game_map.map_grid);
+		free_string_array(game.map.grid);
 		close(fd);
 		return (4);
 	}
 	close(fd);
-	if (initialize_game_engine(&game_map) != 0)
+	if (init_game_engine(&game) != 0)
 	{
 		ft_printf("Error\nGame engine initialization failed\n");
-		free_string_array(game_map.map_grid);
+		free_string_array(game.map.grid);
 		return (5);
 	}
 	return (0);
