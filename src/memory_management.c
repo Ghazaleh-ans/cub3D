@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:19:37 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 21:22:23 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/12 13:25:02 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,8 @@ void	destroy_mlx_images(t_game_map *game_map)
 {
 	int	texture_index;
 
-	/* Only proceed if MLX instance exists */
 	if (!game_map->mlx_instance)
 		return ;
-	
-	/* Destroy all texture images */
 	texture_index = 0;
 	while (texture_index < 5)
 	{
@@ -50,9 +47,7 @@ void	destroy_mlx_images(t_game_map *game_map)
 		}
 		texture_index++;
 	}
-	
 	#ifdef BONUS
-	/* Destroy minimap image */
 	if (game_map->minimap_image.mlx_image_ptr)
 	{
 		mlx_destroy_image(game_map->mlx_instance, game_map->minimap_image.mlx_image_ptr);
@@ -81,8 +76,6 @@ void	free_texture_paths(t_game_map *game_map)
 	int	texture_index;
 
 	texture_index = 0;
-	
-	/* Free paths for directional textures only (indices 0-3) */
 	while (texture_index < 4)
 	{
 		if (game_map->texture_images[texture_index].texture_path)
@@ -116,21 +109,15 @@ void	free_string_array(char **string_array)
 {
 	int	string_index;
 
-	/* Return early if array is NULL */
 	if (!string_array)
 		return ;
-	
 	string_index = 0;
-	
-	/* Free each individual string */
 	while (string_array[string_index])
 	{
 		free(string_array[string_index]);
-		string_array[string_index] = NULL;  /* Set to NULL for safety */
+		string_array[string_index] = NULL;
 		string_index++;
 	}
-	
-	/* Free the array itself */
 	free(string_array);
 }
 

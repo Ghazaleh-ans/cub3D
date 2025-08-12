@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:51:56 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 21:24:54 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/12 13:14:33 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,21 +37,13 @@
  */
 int	render_frame(t_game_map *game_map)
 {
-	/* Clear screen with floor and ceiling colors */
 	render_background_colors(game_map);
-	
-	/* Execute ray-casting to render 3D world */
 	execute_raycasting(game_map);
-	
-	/* Display the rendered frame to the window */
 	mlx_put_image_to_window(game_map->mlx_instance, game_map->mlx_window, 
 		game_map->texture_images[4].mlx_image_ptr, 0, 0);
-	
 	#ifdef BONUS
-	/* Overlay minimap in the top-left corner (bonus feature) */
 	mlx_put_image_to_window(game_map->mlx_instance, game_map->mlx_window,
 		game_map->minimap_image.mlx_image_ptr, MINIMAP_OFFSET, MINIMAP_OFFSET);
 	#endif
-	
 	return (0);
 }
