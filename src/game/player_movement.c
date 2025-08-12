@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:51:12 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 13:23:05 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/12 17:11:12 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,22 +19,10 @@
 /**
  * @brief Move player with collision detection and minimap updates
  * 
- * This function handles player movement with comprehensive collision detection:
- * 1. Calculates new position based on movement vector and direction
- * 2. Checks for wall collisions on X and Y axes independently
- * 3. Updates player position only if movement is valid
- * 4. Updates minimap display when player changes grid position
- * 
- * Independent axis checking allows sliding along walls:
- * - Player can move horizontally even if blocked vertically
- * - Player can move vertically even if blocked horizontally
- * 
- * @param game_map Pointer to the main game structure
- * @param delta_x X component of movement vector
- * @param delta_y Y component of movement vector
- * @param direction_sign '+' for positive movement, '-' for negative movement
+ * This function handles player movement with comprehensive collision detection.
+ * Independent axis checking allows sliding along walls.
  */
-void	move_player_with_collision(t_game_map *game_map, double delta_x, 
+void	move_player_with_collision(t_game *game, double delta_x, 
 		double delta_y, char direction_sign)
 {
 	int	previous_grid_x;
@@ -42,31 +30,35 @@ void	move_player_with_collision(t_game_map *game_map, double delta_x,
 	int	new_grid_x;
 	int	new_grid_y;
 
-	previous_grid_x = (int)game_map->player_pos_x;
-	previous_grid_y = (int)game_map->player_pos_y;
+	previous_grid_x = (int)game->player.pos_x;
+	previous_grid_y = (int)game->player.pos_y;
+	
 	if (direction_sign == '+')
 	{
-		new_grid_x = (int)(game_map->player_pos_x + delta_x);
-		if (game_map->map_grid[(int)game_map->player_pos_y][new_grid_x] != '1')
-			game_map->player_pos_x += delta_x;
-		new_grid_y = (int)(game_map->player_pos_y + delta_y);
-		if (game_map->map_grid[new_grid_y][(int)game_map->player_pos_x] != '1')
-			game_map->player_pos_y += delta_y;
+		new_grid_x = (int)(game->player.pos_x + delta_x);
+		if (game->map.grid[(int)game->player.pos_y][new_grid_x] != '1')
+			game->player.pos_x += delta_x;
+			
+		new_grid_y = (int)(game->player.pos_y + delta_y);
+		if (game->map.grid[new_grid_y][(int)game->player.pos_x] != '1')
+			game->player.pos_y += delta_y;
 	}
 	else if (direction_sign == '-')
 	{
-		new_grid_x = (int)(game_map->player_pos_x - delta_x);
-		if (game_map->map_grid[(int)game_map->player_pos_y][new_grid_x] != '1')
-			game_map->player_pos_x -= delta_x;
-		new_grid_y = (int)(game_map->player_pos_y - delta_y);
-		if (game_map->map_grid[new_grid_y][(int)game_map->player_pos_x] != '1')
-			game_map->player_pos_y -= delta_y;
-	}	
+		new_grid_x = (int)(game->player.pos_x - delta_x);
+		if (game->map.grid[(int)game->player.pos_y][new_grid_x] != '1')
+			game->player.pos_x -= delta_x;
+			
+		new_grid_y = (int)(game->player.pos_y - delta_y);
+		if (game->map.grid[new_grid_y][(int)game->player.pos_x] != '1')
+			game->player.pos_y -= delta_y;
+	}
+	
 	#ifdef BONUS
-	if ((int)game_map->player_pos_x != previous_grid_x || 
-		(int)game_map->player_pos_y != previous_grid_y)
+	if ((int)game->player.pos_x != previous_grid_x || 
+		(int)game->player.pos_y != previous_grid_y)
 	{
-		update_minimap_player_position(game_map, previous_grid_x, previous_grid_y);
+		update_minimap_player_position(game, previous_grid_x, previous_grid_y);
 	}
 	#else
 	(void)previous_grid_x;
@@ -82,22 +74,9 @@ void	move_player_with_collision(t_game_map *game_map, double delta_x,
  * @brief Rotate player view direction and camera plane
  * 
  * This function implements smooth view rotation using rotation matrices.
- * Both the player direction vector and camera plane must be rotated
- * together to maintain proper perspective projection.
- * 
- * Rotation mathematics:
- * - Uses 2D rotation matrix: [cos(θ) -sin(θ); sin(θ) cos(θ)]
- * - Positive angles rotate counter-clockwise
- * - Negative angles rotate clockwise
- * - Both direction and plane vectors are rotated by the same angle
- * 
- * The camera plane determines the field of view and must remain
- * perpendicular to the direction vector for correct rendering.
- * 
- * @param game_map Pointer to the main game structure
- * @param rotation_speed Angular speed of rotation (positive = counter-clockwise)
+ * Both the player direction vector and camera plane must be rotated together.
  */
-void	rotate_player_view(t_game_map *game_map, double rotation_speed)
+void	rotate_player_view(t_game *game, double rotation_speed)
 {
 	double	temp_dir_x;
 	double	temp_plane_x;
@@ -106,14 +85,18 @@ void	rotate_player_view(t_game_map *game_map, double rotation_speed)
 
 	cos_rotation = cos(rotation_speed);
 	sin_rotation = sin(rotation_speed);
-	temp_dir_x = game_map->player_dir_x;
-	game_map->player_dir_x = game_map->player_dir_x * cos_rotation - 
-		game_map->player_dir_y * sin_rotation;
-	game_map->player_dir_y = temp_dir_x * sin_rotation + 
-		game_map->player_dir_y * cos_rotation;
-	temp_plane_x = game_map->camera_plane_x;
-	game_map->camera_plane_x = game_map->camera_plane_x * cos_rotation - 
-		game_map->camera_plane_y * sin_rotation;
-	game_map->camera_plane_y = temp_plane_x * sin_rotation + 
-		game_map->camera_plane_y * cos_rotation;
+	
+	/* Rotate direction vector */
+	temp_dir_x = game->player.dir_x;
+	game->player.dir_x = game->player.dir_x * cos_rotation - 
+		game->player.dir_y * sin_rotation;
+	game->player.dir_y = temp_dir_x * sin_rotation + 
+		game->player.dir_y * cos_rotation;
+	
+	/* Rotate camera plane */
+	temp_plane_x = game->player.plane_x;
+	game->player.plane_x = game->player.plane_x * cos_rotation - 
+		game->player.plane_y * sin_rotation;
+	game->player.plane_y = temp_plane_x * sin_rotation + 
+		game->player.plane_y * cos_rotation;
 }

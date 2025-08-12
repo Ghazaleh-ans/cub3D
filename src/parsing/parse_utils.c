@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:46:12 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 14:46:14 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/12 17:16:59 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,6 @@
 
 /**
  * @brief Check if a character is present in a list of valid characters
- * 
- * This utility function validates input characters against a predefined
- * set of allowed characters. It's commonly used for:
- * - Map character validation (0, 1, N, S, E, W, space)
- * - Player direction validation (N, S, E, W)
- * - Any other character set validation needs
- * 
- * @param character The character to validate
- * @param valid_characters String containing all allowed characters
- * @return 1 if character is valid, 0 if not found in valid set
  */
 int	is_character_valid(char character, char *valid_characters)
 {
@@ -52,14 +42,6 @@ int	is_character_valid(char character, char *valid_characters)
 
 /**
  * @brief Calculate string length excluding newline character
- * 
- * This function is specifically designed for parsing map files where
- * lines may contain trailing newlines that should not be counted in
- * the effective length. This is crucial for proper map dimension
- * calculation and line processing.
- * 
- * @param string The string to measure
- * @return Length of string up to (but not including) newline or null terminator
  */
 int	get_string_length_no_newline(char *string)
 {
@@ -76,19 +58,6 @@ int	get_string_length_no_newline(char *string)
 
 /**
  * @brief Resize a string to a specific length, padding with spaces
- * 
- * This function creates a new string with the specified target size:
- * - Copies existing content from the original string
- * - Pads remaining space with space characters
- * - Null-terminates the result
- * - Frees the original string to prevent memory leaks
- * 
- * This is essential for map normalization, ensuring all map lines
- * have uniform width for easier processing.
- * 
- * @param original_string The string to resize (will be freed)
- * @param target_size Desired size of the new string
- * @return Newly allocated string of target_size, or NULL on failure
  */
 char	*resize_string_to_size(char *original_string, int target_size)
 {
@@ -132,20 +101,6 @@ char	*resize_string_to_size(char *original_string, int target_size)
 
 /**
  * @brief Join two strings with a forward slash separator
- * 
- * This specialized string joining function is designed for map file parsing.
- * It concatenates two strings with a '/' separator, which is later used
- * by ft_split to convert the accumulated map data into a 2D array.
- * 
- * Key features:
- * - Handles NULL first string (creates new string)
- * - Excludes newline characters from length calculation
- * - Adds '/' separator for later splitting
- * - Automatically frees the first string to prevent memory leaks
- * 
- * @param first_string First string to join (can be NULL, will be freed)
- * @param second_string Second string to append
- * @return Newly allocated joined string with separator, or NULL on failure
  */
 char	*join_strings_with_separator(char *first_string, char *second_string)
 {
