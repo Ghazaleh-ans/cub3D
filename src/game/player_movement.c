@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:51:12 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 21:24:17 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/12 13:23:05 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,39 +42,26 @@ void	move_player_with_collision(t_game_map *game_map, double delta_x,
 	int	new_grid_x;
 	int	new_grid_y;
 
-	/* Store previous grid position for minimap updates */
 	previous_grid_x = (int)game_map->player_pos_x;
 	previous_grid_y = (int)game_map->player_pos_y;
-	
-	/* Calculate movement based on direction sign */
 	if (direction_sign == '+')
 	{
-		/* Forward/rightward movement */
-		/* Check X-axis collision */
 		new_grid_x = (int)(game_map->player_pos_x + delta_x);
 		if (game_map->map_grid[(int)game_map->player_pos_y][new_grid_x] != '1')
 			game_map->player_pos_x += delta_x;
-		
-		/* Check Y-axis collision */
 		new_grid_y = (int)(game_map->player_pos_y + delta_y);
 		if (game_map->map_grid[new_grid_y][(int)game_map->player_pos_x] != '1')
 			game_map->player_pos_y += delta_y;
 	}
 	else if (direction_sign == '-')
 	{
-		/* Backward/leftward movement */
-		/* Check X-axis collision */
 		new_grid_x = (int)(game_map->player_pos_x - delta_x);
 		if (game_map->map_grid[(int)game_map->player_pos_y][new_grid_x] != '1')
 			game_map->player_pos_x -= delta_x;
-		
-		/* Check Y-axis collision */
 		new_grid_y = (int)(game_map->player_pos_y - delta_y);
 		if (game_map->map_grid[new_grid_y][(int)game_map->player_pos_x] != '1')
 			game_map->player_pos_y -= delta_y;
-	}
-	
-	/* Update minimap if player changed grid position (bonus feature) */
+	}	
 	#ifdef BONUS
 	if ((int)game_map->player_pos_x != previous_grid_x || 
 		(int)game_map->player_pos_y != previous_grid_y)
@@ -82,7 +69,6 @@ void	move_player_with_collision(t_game_map *game_map, double delta_x,
 		update_minimap_player_position(game_map, previous_grid_x, previous_grid_y);
 	}
 	#else
-	/* Suppress unused variable warning in mandatory version */
 	(void)previous_grid_x;
 	(void)previous_grid_y;
 	#endif
@@ -118,23 +104,14 @@ void	rotate_player_view(t_game_map *game_map, double rotation_speed)
 	double	cos_rotation;
 	double	sin_rotation;
 
-	/* Pre-calculate trigonometric values for efficiency */
 	cos_rotation = cos(rotation_speed);
 	sin_rotation = sin(rotation_speed);
-	
-	/* Store original direction X component */
 	temp_dir_x = game_map->player_dir_x;
-	
-	/* Rotate direction vector using rotation matrix */
 	game_map->player_dir_x = game_map->player_dir_x * cos_rotation - 
 		game_map->player_dir_y * sin_rotation;
 	game_map->player_dir_y = temp_dir_x * sin_rotation + 
 		game_map->player_dir_y * cos_rotation;
-	
-	/* Store original camera plane X component */
 	temp_plane_x = game_map->camera_plane_x;
-	
-	/* Rotate camera plane vector using the same rotation matrix */
 	game_map->camera_plane_x = game_map->camera_plane_x * cos_rotation - 
 		game_map->camera_plane_y * sin_rotation;
 	game_map->camera_plane_y = temp_plane_x * sin_rotation + 

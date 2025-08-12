@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:13:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 14:13:02 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/12 13:08:20 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,10 @@
  */
 void	calculate_delta_distances(t_game_map *game_map)
 {
-	/* Calculate delta distance for X direction */
 	if (game_map->ray_direction_x == 0)
 		game_map->delta_distance_x = INT_MAX;
 	else
 		game_map->delta_distance_x = fabs(1 / game_map->ray_direction_x);
-	
-	/* Calculate delta distance for Y direction */
 	if (game_map->ray_direction_y == 0)
 		game_map->delta_distance_y = INT_MAX;
 	else
@@ -62,7 +59,6 @@ void	calculate_delta_distances(t_game_map *game_map)
  */
 void	calculate_step_and_side_distances(t_game_map *game_map)
 {
-	/* Calculate step direction and side distance for X axis */
 	if (game_map->ray_direction_x < 0)
 	{
 		game_map->step_x = -1;
@@ -75,8 +71,6 @@ void	calculate_step_and_side_distances(t_game_map *game_map)
 		game_map->side_distance_x = (game_map->current_map_x + 1.0 - game_map->player_pos_x) 
 			* game_map->delta_distance_x;
 	}
-	
-	/* Calculate step direction and side distance for Y axis */
 	if (game_map->ray_direction_y < 0)
 	{
 		game_map->step_y = -1;
@@ -113,27 +107,20 @@ void	execute_dda_algorithm(t_game_map *game_map)
 	int	wall_hit;
 
 	wall_hit = 0;
-	
-	/* Continue until we hit a wall */
 	while (wall_hit == 0)
 	{
-		/* Check which direction has the shorter distance to next boundary */
 		if (game_map->side_distance_x < game_map->side_distance_y)
 		{
-			/* Step in X direction */
 			game_map->side_distance_x += game_map->delta_distance_x;
 			game_map->current_map_x += game_map->step_x;
-			game_map->wall_side = 0;  /* Hit vertical wall */
+			game_map->wall_side = 0;
 		}
 		else
 		{
-			/* Step in Y direction */
 			game_map->side_distance_y += game_map->delta_distance_y;
 			game_map->current_map_y += game_map->step_y;
-			game_map->wall_side = 1;  /* Hit horizontal wall */
+			game_map->wall_side = 1;
 		}
-		
-		/* Check if we hit a wall */
 		if (game_map->map_grid[game_map->current_map_y][game_map->current_map_x] == '1')
 			wall_hit = 1;
 	}
@@ -157,14 +144,9 @@ void	execute_dda_algorithm(t_game_map *game_map)
  */
 void	initialize_raycasting_for_column(t_game_map *game_map, int screen_x)
 {
-	/* Set current map position to player's position */
 	game_map->current_map_x = (int)game_map->player_pos_x;
 	game_map->current_map_y = (int)game_map->player_pos_y;
-	
-	/* Calculate camera X coordinate (-1 to +1) */
-	game_map->camera_x = 2 * screen_x / (double)game_map->display_width - 1;
-	
-	/* Calculate ray direction based on player direction and camera plane */
+	game_map->camera_x = 2 * screen_x / (double)game_map->display_width - 1;	
 	game_map->ray_direction_x = game_map->player_dir_x + game_map->camera_plane_x * game_map->camera_x;
 	game_map->ray_direction_y = game_map->player_dir_y + game_map->camera_plane_y * game_map->camera_x;
 }
@@ -189,38 +171,18 @@ void	execute_raycasting(t_game_map *game_map)
 	int	screen_x;
 
 	screen_x = 0;
-	
-	/* Process each column of the screen */
 	while (screen_x < game_map->display_width)
 	{
-		/* Initialize raycasting variables for this column */
 		initialize_raycasting_for_column(game_map, screen_x);
-		
-		/* Calculate delta distances for DDA algorithm */
 		calculate_delta_distances(game_map);
-		
-		/* Calculate step directions and initial side distances */
 		calculate_step_and_side_distances(game_map);
-		
-		/* Execute DDA algorithm to find wall intersection */
 		execute_dda_algorithm(game_map);
-		
 		/* Calculate perpendicular distance to avoid fisheye effect */
 		if (game_map->wall_side == 0)
-		{
-			/* Vertical wall hit */
 			game_map->perpendicular_wall_distance = (game_map->side_distance_x - game_map->delta_distance_x);
-		}
 		else
-		{
-			/* Horizontal wall hit */
 			game_map->perpendicular_wall_distance = (game_map->side_distance_y - game_map->delta_distance_y);
-		}
-		
-		/* Draw the wall column for this screen x-coordinate */
 		draw_wall_column(game_map, screen_x);
-		
-		/* Move to next column */
 		screen_x++;
 	}
 }

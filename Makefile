@@ -13,6 +13,9 @@ LIBFT_DIR		= libft
 
 # Platform detection
 OS				= $(shell uname)
+MAKE			= make -C
+MKDIR			= mkdir -p
+RM				= rm -rf
 
 # Source files (updated to match your original structure)
 MAIN_FILES		= main.c \
@@ -42,6 +45,7 @@ SRCS			= $(addprefix $(SRC_DIR)/, $(MAIN_FILES) $(PARSING_FILES) $(GAME_FILES) $
 # Add bonus files when bonus flag is set
 ifdef BONUS
 	SRCS		+= $(addprefix $(SRC_DIR)/, $(BONUS_FILES))
+	CFLAGS		+= -DBONUS
 endif
 
 # Object files
@@ -58,13 +62,33 @@ MATH_LIB		= -lm
 
 # Platform-specific MLX configuration
 ifeq ($(OS), Linux)
-	# Linux with system-installed MLX
-	INCLUDES		+= -I/usr/include
-	MLX_FLAGS		= -L/usr/lib -lmlx -lXext -lX11
-	MLX_LIB			= # No local MLX library needed
+	# Check if system MLX is available by looking for libmlx files
+	# Try multiple common locations for system-installed MLX
+	ifneq ($(shell find /usr/lib* /usr/local/lib* -name "libmlx*" 2>/dev/null | head -1), )
+		# System MLX found
+		MLX_LIB		= # No local MLX library needed
+		INCLUDES	+= -I/usr/include -I/usr/local/include
+		MLX_FLAGS	= -lmlx -lXext -lX11 
+	else ifneq ($(shell ldconfig -p 2>/dev/null | grep libmlx), )
+		# System MLX found via ldconfig
+		MLX_LIB		= # No local MLX library needed
+		INCLUDES	+= -I/usr/include -I/usr/local/include
+		MLX_FLAGS	= -lmlx -lXext -lX11 
+	else ifeq ($(shell test -d mlx_linux && echo "yes"), yes)
+		# No system MLX, but mlx_linux folder exists
+		MLX_DIR		= mlx_linux
+		MLX_LIB		= $(MLX_DIR)/libmlx.a
+		INCLUDES	+= -I$(MLX_DIR)
+		MLX_FLAGS	= -L$(MLX_DIR) -lmlx -lXext -lX11 
+	else
+		# No MLX found anywhere - will try system MLX and let linker handle it
+		MLX_LIB		= # No local MLX library needed
+		INCLUDES	+= -I/usr/include -I/usr/local/include
+		MLX_FLAGS	= -lmlx -lXext -lX11 
+	endif
 else ifeq ($(OS), Darwin)
-	# macOS - check for system MLX or use local
-	MLX_DIR			= minilibx
+	# macOS - use local mlx_macos
+	MLX_DIR			= mlx_macos
 	MLX_LIB			= $(MLX_DIR)/libmlx.a
 	INCLUDES		+= -I$(MLX_DIR)
 	MLX_FLAGS		= -L$(MLX_DIR) -lmlx -framework OpenGL -framework AppKit
@@ -92,19 +116,19 @@ all: $(LIBFT) $(MLX_LIB) $(OBJ_DIR) $(NAME)
 
 # Create object directory
 $(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
+	@$(MKDIR) $(OBJ_DIR)
 
 # Build libft
 $(LIBFT):
 	@echo "$(BUILD) $(CYAN)Making libft...$(RESET)"
-	@$(MAKE) -C $(LIBFT_DIR) --no-print-directory
+	@$(MAKE) $(LIBFT_DIR) --no-print-directory
 	@echo "$(SUCCESS) $(YELLOW)Made libft!$(RESET)"
 
-# Build MinilibX (macOS only)
-ifeq ($(OS), Darwin)
+# Build MinilibX (only if MLX_DIR is defined - local MLX)
+ifdef MLX_DIR
 $(MLX_LIB):
-	@echo "$(BUILD) $(CYAN)Making MinilibX...$(RESET)"
-	@$(MAKE) -C $(MLX_DIR) --no-print-directory
+	@echo "$(BUILD) $(CYAN)Making MinilibX ($(MLX_DIR))...$(RESET)"
+	@$(MAKE) $(MLX_DIR) --no-print-directory
 	@echo "$(SUCCESS) $(YELLOW)Made MinilibX!$(RESET)"
 endif
 
@@ -116,31 +140,35 @@ $(NAME): $(OBJS) Makefile
 
 # Compile object files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(dir $@)
+	@$(MKDIR) $(dir $@)
 	@echo "$(YELLOW)Compiling $<...$(RESET)"
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Clean object files
 clean:
-	@rm -rf $(OBJ_DIR)
-	@$(MAKE) -C $(LIBFT_DIR) clean --no-print-directory
-ifeq ($(OS), Darwin)
-	@if [ -d "$(MLX_DIR)" ]; then $(MAKE) -C $(MLX_DIR) clean --no-print-directory; fi
+	@$(RM) $(OBJ_DIR)
+	@$(MAKE) $(LIBFT_DIR) clean --no-print-directory
+ifdef MLX_DIR
+	@if [ -d "$(MLX_DIR)" ]; then $(MAKE) $(MLX_DIR) clean --no-print-directory; fi
 endif
 	@echo "$(CLEAN) $(RED)Cleaned!$(RESET)"
 
 # Clean everything
 fclean: clean
-	@rm -f $(NAME)
-	@$(MAKE) -C $(LIBFT_DIR) fclean --no-print-directory
+	@$(RM) $(NAME)
+	@$(MAKE) $(LIBFT_DIR) fclean --no-print-directory
+ifdef MLX_DIR
+	@if [ -d "$(MLX_DIR)" ]; then $(MAKE) $(MLX_DIR) fclean --no-print-directory 2>/dev/null || true; fi
+endif
 	@echo "$(CLEAN) $(RED)Full Cleaned!$(RESET)"
 
 # Rebuild everything
 re: fclean all
 
-# Bonus target (with additional features)
-bonus: 
-	@$(MAKE) BONUS=1 CFLAGS="$(CFLAGS) -DBONUS"
+# Bonus target (with additional features) - independent and clean build
+bonus: fclean
+	@echo "$(BUILD) $(MAGENTA)Building bonus version...$(RESET)"
+	@$(MAKE) . BONUS=1 --no-print-directory
 	@echo "$(MAGENTA)$(SUCCESS) Bonus features enabled!$(RESET)"
 
 # Debug target with additional debugging flags
@@ -158,6 +186,7 @@ help:
 	@echo "  $(GREEN)bonus$(RESET)   - Build with bonus features"
 	@echo "  $(GREEN)debug$(RESET)   - Build debug version with AddressSanitizer"
 	@echo "  $(GREEN)help$(RESET)    - Show this help message"
+	@echo "  $(GREEN)info$(RESET)    - Show project information"
 
 # Check for coding style (if norminette is available)
 norm:
@@ -182,14 +211,19 @@ install-deps:
 	@echo "$(BLUE)Installing dependencies...$(RESET)"
 ifeq ($(OS), Linux)
 	@if command -v apt >/dev/null 2>&1; then \
-		sudo apt update && sudo apt install -y build-essential libx11-dev libxext-dev libmlx-dev; \
+		sudo apt update && sudo apt install -y build-essential libx11-dev libxext-dev; \
+		echo "$(GREEN)✅ Dependencies installed for Ubuntu/Debian$(RESET)"; \
 	elif command -v yum >/dev/null 2>&1; then \
 		sudo yum groupinstall -y "Development Tools" && sudo yum install -y libX11-devel libXext-devel; \
+		echo "$(GREEN)✅ Dependencies installed for RHEL/CentOS$(RESET)"; \
+	elif command -v pacman >/dev/null 2>&1; then \
+		sudo pacman -S base-devel libx11 libxext; \
+		echo "$(GREEN)✅ Dependencies installed for Arch Linux$(RESET)"; \
 	else \
-		echo "$(YELLOW)⚠️  Package manager not detected. Please install X11 and MLX development libraries manually.$(RESET)"; \
+		echo "$(YELLOW)⚠️  Package manager not detected. Please install X11 and Xext development libraries manually.$(RESET)"; \
 	fi
 else ifeq ($(OS), Darwin)
-	@echo "$(GREEN)On macOS, using local MinilibX or system-installed version$(RESET)"
+	@echo "$(GREEN)On macOS, using local MinilibX from $(MLX_DIR)$(RESET)"
 endif
 
 # Show project info
@@ -201,7 +235,12 @@ info:
 	@echo "  Platform: $(GREEN)$(OS)$(RESET)"
 	@echo "  Source files: $(GREEN)$(words $(SRCS))$(RESET)"
 	@echo "  Object files: $(GREEN)$(words $(OBJS))$(RESET)"
-	@echo "  MLX: $(GREEN)System-installed (Linux) / Local (macOS)$(RESET)"
+ifdef MLX_DIR
+	@echo "  MLX: $(GREEN)Local ($(MLX_DIR))$(RESET)"
+else
+	@echo "  MLX: $(GREEN)System-installed$(RESET)"
+endif
+	@echo "  MLX Flags: $(GREEN)$(MLX_FLAGS)$(RESET)"
 
 # Declare phony targets
 .PHONY: all clean fclean re bonus debug help norm test install-deps info

@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:53:26 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/11 14:53:30 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/12 13:15:11 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,8 @@ int	get_texture_color(t_game_map *game_map, int texture_x, int texture_y, int te
 {
 	char	*pixel_address;
 
-	/* Calculate exact pixel address in texture buffer */
 	pixel_address = game_map->texture_images[texture_index].image_buffer +
 		(texture_y * game_map->texture_images[texture_index].line_length +
 		texture_x * (game_map->texture_images[texture_index].bits_per_pixel / 8));
-	
-	/* Read and return color value */
 	return (*(int *)pixel_address);
 }
