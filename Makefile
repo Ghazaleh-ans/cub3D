@@ -37,7 +37,8 @@ GAME_FILES		= game/game_init.c \
 RAYCAST_FILES	= raycasting/raycasting.c \
 				  raycasting/raycasting_utils.c \
 				  raycasting/rendering.c \
-				  raycasting/drawing.c
+				  raycasting/drawing.c \
+				  raycasting/drawing_utils.c \
 
 # Bonus files (minimap is bonus feature)
 BONUS_FILES		= raycasting/minimap.c
