@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:30:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 17:10:19 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 11:24:33 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,13 @@ int	validate_input_file(char *filename)
 
 	if (!validate_file_extension(filename))
 	{
-		ft_printf("Error\nInvalid file extension. Expected: .cub\n");
+		printf("Error\nInvalid file extension. Expected: .cub\n");
 		return (0);
 	}
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 	{
-		ft_printf("Error\nCannot open file: %s\n", filename);
+		printf("Error\nCannot open file: %s\n", filename);
 		return (0);
 	}
 	read_result = read(fd, test_buffer, 1);
@@ -60,9 +60,9 @@ int	validate_input_file(char *filename)
 	if (read_result <= 0)
 	{
 		if (read_result == 0)
-			ft_printf("Error\nFile is empty: %s\n", filename);
+			printf("Error\nFile is empty: %s\n", filename);
 		else
-			ft_printf("Error\nCannot read file: %s\n", filename);
+			printf("Error\nCannot read file: %s\n", filename);
 		return (0);
 	}
 	return (1);
@@ -122,11 +122,10 @@ int	main(int argc, char **argv)
 	t_game	game;
 	int		fd;
 
-	init_game_structure(&game);
 	if (argc != 2)
 	{
-		ft_printf("Error\nUsage: %s <map_file.cub>\n", argv[0]);
-		ft_printf("Expected exactly one argument: path to .cub file\n");
+		printf("Error\nUsage: %s <map_file.cub>\n", argv[0]);
+		printf("Expected exactly one argument: path to .cub file\n");
 		return (1);
 	}
 	if (!validate_input_file(argv[1]))
@@ -134,12 +133,13 @@ int	main(int argc, char **argv)
 	fd = open(argv[1], O_RDONLY);
 	if (fd < 0)
 	{
-		ft_printf("Error\nFailed to open file for parsing: %s\n", argv[1]);
+		printf("Error\nFailed to open file for parsing: %s\n", argv[1]);
 		return (3);
 	}
+	init_game_structure(&game);
 	if (!parse_map_file(&game, fd))
 	{
-		ft_printf("Error\nMap parsing failed\n");
+		printf("Error\nMap parsing failed\n");
 		free_string_array(game.map.grid);
 		close(fd);
 		return (4);
@@ -147,7 +147,7 @@ int	main(int argc, char **argv)
 	close(fd);
 	if (init_game_engine(&game) != 0)
 	{
-		ft_printf("Error\nGame engine initialization failed\n");
+		printf("Error\nGame engine initialization failed\n");
 		free_string_array(game.map.grid);
 		return (5);
 	}

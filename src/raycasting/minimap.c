@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:53:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 17:16:38 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 12:58:35 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,6 @@
 
 #ifdef BONUS
 
-/* ************************************************************************** */
-/*                           MINIMAP RENDERING (BONUS)                       */
-/* ************************************************************************** */
-
-/**
- * @brief Draw the complete minimap display
- */
 void	draw_minimap_display(t_game *game)
 {
 	int	row_index;
@@ -52,9 +45,6 @@ void	draw_minimap_display(t_game *game)
 	}
 }
 
-/**
- * @brief Update minimap when player moves to a different grid cell
- */
 void	update_minimap_player_position(t_game *game, int previous_x, int previous_y)
 {
 	int	background_color;
@@ -75,13 +65,6 @@ void	update_minimap_player_position(t_game *game, int previous_x, int previous_y
 	}
 }
 
-/* ************************************************************************** */
-/*                           MINIMAP PIXEL OPERATIONS                        */
-/* ************************************************************************** */
-
-/**
- * @brief Put a pixel to the minimap image with bounds checking
- */
 void	put_pixel_to_minimap(t_game *game, int x, int y, int color)
 {
 	char	*pixel_address;
@@ -94,9 +77,6 @@ void	put_pixel_to_minimap(t_game *game, int x, int y, int color)
 	*(int *)pixel_address = color;
 }
 
-/**
- * @brief Draw a single case/cell on the minimap
- */
 void	draw_minimap_case(t_game *game, int start_x, int start_y, int color)
 {
 	int	pixel_row;
@@ -115,5 +95,4 @@ void	draw_minimap_case(t_game *game, int start_x, int start_y, int color)
 		pixel_row++;
 	}
 }
-
-#endif /* BONUS */
+#endif

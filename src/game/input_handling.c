@@ -6,21 +6,12 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:50:44 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 17:53:39 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 12:45:42 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-/* ************************************************************************** */
-/*                           KEYBOARD INPUT HANDLING                         */
-/* ************************************************************************** */
-
-/**
- * @brief Process keyboard input events and execute corresponding actions
- * 
- * This function handles all keyboard input for game control with the new structure.
- */
 int	handle_keyboard_input(int keycode, t_game *game)
 {
 	if (keycode == KEY_ESC)
@@ -50,15 +41,6 @@ int	handle_keyboard_input(int keycode, t_game *game)
 	return (0);
 }
 
-/* ************************************************************************** */
-/*                           MOUSE INPUT HANDLING                            */
-/* ************************************************************************** */
-
-/**
- * @brief Handle mouse movement for view rotation (bonus feature)
- * 
- * This function implements mouse-look functionality with the new structure.
- */
 #ifdef BONUS
 int	handle_mouse_rotation(int mouse_x, int mouse_y, t_game *game)
 {

@@ -6,25 +6,16 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:19:37 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 17:12:19 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 12:56:47 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-/* ************************************************************************** */
-/*                           MLX IMAGE CLEANUP                               */
-/* ************************************************************************** */
-
-/**
- * @brief Safely destroy all MLX images to prevent memory leaks
- */
 void	destroy_mlx_images(t_game *game)
 {
 	if (!game->mlx.instance)
 		return ;
-		
-	/* Destroy individual texture images */
 	if (game->textures.north.mlx_ptr)
 	{
 		mlx_destroy_image(game->mlx.instance, game->textures.north.mlx_ptr);
@@ -50,7 +41,6 @@ void	destroy_mlx_images(t_game *game)
 		mlx_destroy_image(game->mlx.instance, game->textures.screen.mlx_ptr);
 		game->textures.screen.mlx_ptr = NULL;
 	}
-	
 	#ifdef BONUS
 	if (game->textures.minimap.mlx_ptr)
 	{
@@ -60,13 +50,6 @@ void	destroy_mlx_images(t_game *game)
 	#endif
 }
 
-/* ************************************************************************** */
-/*                          TEXTURE PATH CLEANUP                            */
-/* ************************************************************************** */
-
-/**
- * @brief Free all allocated texture paths
- */
 void	free_texture_paths(t_game *game)
 {
 	if (game->textures.north.path)
@@ -91,13 +74,6 @@ void	free_texture_paths(t_game *game)
 	}
 }
 
-/* ************************************************************************** */
-/*                           STRING ARRAY CLEANUP                           */
-/* ************************************************************************** */
-
-/**
- * @brief Free a dynamically allocated array of strings
- */
 void	free_string_array(char **string_array)
 {
 	int	string_index;
@@ -114,13 +90,6 @@ void	free_string_array(char **string_array)
 	free(string_array);
 }
 
-/* ************************************************************************** */
-/*                           PARSING BUFFER CLEANUP                         */
-/* ************************************************************************** */
-
-/**
- * @brief Free parsing-related buffers and temporary data
- */
 static void	free_parsing_buffers(t_game *game)
 {
 	if (game->map.current_line)
@@ -136,13 +105,6 @@ static void	free_parsing_buffers(t_game *game)
 	}
 }
 
-/* ************************************************************************** */
-/*                            MLX CLEANUP                                   */
-/* ************************************************************************** */
-
-/**
- * @brief Properly shutdown MLX and free related resources
- */
 static void	cleanup_mlx_resources(t_game *game)
 {
 	if (game->mlx.window && game->mlx.instance)
@@ -159,39 +121,17 @@ static void	cleanup_mlx_resources(t_game *game)
 	}
 }
 
-/* ************************************************************************** */
-/*                            COMPLETE CLEANUP                              */
-/* ************************************************************************** */
-
-/**
- * @brief Comprehensive cleanup and program exit function
- */
 int	clean_exit_program(t_game *game)
 {
-	/* Phase 1: Free texture-related memory */
 	free_texture_paths(game);
-	
-	/* Phase 2: Free map and parsing data */
 	free_string_array(game->map.grid);
 	free_parsing_buffers(game);
-	
-	/* Phase 3: Cleanup MLX resources */
 	destroy_mlx_images(game);
 	cleanup_mlx_resources(game);
-	
-	/* Phase 4: Exit program successfully */
 	exit(EXIT_SUCCESS);
-	
 	return (0);
 }
 
-/* ************************************************************************** */
-/*                           ERROR CLEANUP                                  */
-/* ************************************************************************** */
-
-/**
- * @brief Cleanup function for error conditions during parsing
- */
 void	cleanup_parsing_error(t_game *game)
 {
 	free_string_array(game->map.grid);
@@ -199,9 +139,6 @@ void	cleanup_parsing_error(t_game *game)
 	free_texture_paths(game);
 }
 
-/**
- * @brief Cleanup function for error conditions during game initialization
- */
 void	cleanup_initialization_error(t_game *game)
 {
 	cleanup_parsing_error(game);
