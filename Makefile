@@ -3,7 +3,7 @@ NAME			= cub3D
 
 # Compiler and flags
 CC				= cc
-CFLAGS			= -Wall -Wextra -Werror -O3 -g3
+CFLAGS			= -Wall -Wextra -Werror -O3
 
 # Directories
 SRC_DIR			= src
@@ -177,11 +177,6 @@ bonus: fclean
 	@$(MAKE) . BONUS=1 --no-print-directory
 	@echo "$(MAGENTA)$(SUCCESS) Bonus features enabled!$(RESET)"
 
-# Debug target with additional debugging flags
-debug: CFLAGS += -fsanitize=address -DDEBUG
-debug: all
-	@echo "$(CYAN)$(SUCCESS) Debug version compiled with AddressSanitizer!$(RESET)"
-
 # Help target
 help:
 	@echo "$(CYAN)Available targets:$(RESET)"
@@ -190,7 +185,6 @@ help:
 	@echo "  $(GREEN)fclean$(RESET)  - Remove object files and executable"
 	@echo "  $(GREEN)re$(RESET)      - Rebuild the project"
 	@echo "  $(GREEN)bonus$(RESET)   - Build with bonus features"
-	@echo "  $(GREEN)debug$(RESET)   - Build debug version with AddressSanitizer"
 	@echo "  $(GREEN)help$(RESET)    - Show this help message"
 	@echo "  $(GREEN)info$(RESET)    - Show project information"
 
@@ -249,4 +243,4 @@ endif
 	@echo "  MLX Flags: $(GREEN)$(MLX_FLAGS)$(RESET)"
 
 # Declare phony targets
-.PHONY: all clean fclean re bonus debug help norm test install-deps info
+.PHONY: all clean fclean re bonus help norm test install-deps info
