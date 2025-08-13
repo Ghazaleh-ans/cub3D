@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 17:09:50 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 15:37:27 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,13 @@ enum e_direction
 /* ========================================================================== */
 
 void	init_game_structure(t_game *game);
+
+/* ========================================================================== */
+/*                            VALIDATION FUNCTIONS                           */
+/* ========================================================================== */
+int		is_valid_file_descriptor(int fd);
+int		validate_arguments(int argc, char **argv);
+int		is_parseable_map_file(t_game *game, int fd);
 int		validate_input_file(char *filename);
 
 /* ========================================================================== */

@@ -19,7 +19,9 @@ RM				= rm -rf
 
 # Source files (updated to match your original structure)
 MAIN_FILES		= main.c \
-				  memory_management.c
+				  memory_management.c \
+				  initialize_game_struct.c \
+				  validations.c
 
 PARSING_FILES	= parsing/parse_main.c \
 				  parsing/parse_utils.c \
