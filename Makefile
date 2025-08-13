@@ -21,7 +21,9 @@ RM				= rm -rf
 MAIN_FILES		= main.c \
 				  memory_management.c \
 				  initialize_game_struct.c \
-				  validations.c
+				  validations.c \
+				  destroy_mlx_memory.c \
+				  free_memory.c \
 
 PARSING_FILES	= parsing/parse_main.c \
 				  parsing/parse_utils.c \

@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/13 16:39:06 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 17:04:35 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,10 @@ int		validate_input_file(char *filename);
 /* ========================================================================== */
 
 void	destroy_mlx_images(t_game *game);
+void	cleanup_mlx_resources(t_game *game);
 void	free_texture_paths(t_game *game);
 void	free_string_array(char **array);
+void	free_parsing_buffers(t_game *game);
 int		clean_exit_program(t_game *game);
 
 /* ========================================================================== */
