@@ -31,7 +31,8 @@ PARSING_FILES	= parsing/parse_main.c \
 
 GAME_FILES		= game/game_init.c \
 				  game/input_handling.c \
-				  game/player_movement.c
+				  game/player_movement.c \
+				  game/game_init_bonus.c
 
 RAYCAST_FILES	= raycasting/raycasting.c \
 				  raycasting/raycasting_utils.c \

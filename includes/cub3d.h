@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/13 15:37:27 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 15:58:36 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,7 @@ void	render_background_colors(t_game *game);
 /* ========================================================================== */
 
 #ifdef BONUS
+void	init_minimap_system(t_game *game);
 void	draw_minimap_display(t_game *game);
 void	update_minimap_player_position(t_game *game, int previous_x, int previous_y);
 void	put_pixel_to_minimap(t_game *game, int x, int y, int color);
