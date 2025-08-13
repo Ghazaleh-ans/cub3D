@@ -6,19 +6,12 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:15:48 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 17:20:44 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 12:32:52 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-/* ************************************************************************** */
-/*                           PIXEL MANIPULATION                              */
-/* ************************************************************************** */
-
-/**
- * @brief Safely put a pixel to the main display image
- */
 void	put_pixel_to_image(t_game *game, int x, int y, int color)
 {
 	char	*pixel_address;
@@ -31,13 +24,6 @@ void	put_pixel_to_image(t_game *game, int x, int y, int color)
 	*(int *)pixel_address = color;
 }
 
-/* ************************************************************************** */
-/*                          WALL HEIGHT CALCULATION                          */
-/* ************************************************************************** */
-
-/**
- * @brief Calculate wall line parameters for screen rendering
- */
 static void	calculate_wall_line_parameters(t_game *game, int *line_height, 
 		int *start_y, int *end_y)
 {
@@ -50,9 +36,6 @@ static void	calculate_wall_line_parameters(t_game *game, int *line_height,
 		*end_y = game->mlx.height - 1;
 }
 
-/**
- * @brief Calculate texture coordinates for wall rendering
- */
 void	calculate_texture_coordinates(t_game *game, int line_start, int line_height)
 {
 	if (game->ray.side == 0)
@@ -78,13 +61,6 @@ void	calculate_texture_coordinates(t_game *game, int line_start, int line_height
 		line_height / 2) * game->wall.tex_step;
 }
 
-/* ************************************************************************** */
-/*                           TEXTURE SELECTION                               */
-/* ************************************************************************** */
-
-/**
- * @brief Determine which texture to use based on wall orientation
- */
 static int	determine_wall_texture(t_game *game)
 {
 	if (game->ray.side == 1)
@@ -103,25 +79,6 @@ static int	determine_wall_texture(t_game *game)
 	}
 }
 
-/**
- * @brief Get the correct texture image based on direction
- */
-// static t_image	*get_texture_by_direction(t_game *game, int direction)
-// {
-// 	if (direction == NORTH)
-// 		return (&game->textures.north);
-// 	else if (direction == SOUTH)
-// 		return (&game->textures.south);
-// 	else if (direction == EAST)
-// 		return (&game->textures.east);
-// 	else if (direction == WEST)
-// 		return (&game->textures.west);
-// 	return (&game->textures.north); /* fallback */
-// }
-
-/**
- * @brief Render a single pixel of the wall with texture
- */
 static void	draw_textured_wall_pixel(t_game *game, int screen_x, 
 		int screen_y, int texture_index)
 {
@@ -132,13 +89,6 @@ static void	draw_textured_wall_pixel(t_game *game, int screen_x,
 	put_pixel_to_image(game, screen_x, screen_y, pixel_color);
 }
 
-/* ************************************************************************** */
-/*                             WALL RENDERING                                */
-/* ************************************************************************** */
-
-/**
- * @brief Draw a complete vertical wall column on the screen
- */
 void	draw_wall_column(t_game *game, int screen_x)
 {
 	int	line_height;
@@ -158,21 +108,11 @@ void	draw_wall_column(t_game *game, int screen_x)
 	}
 }
 
-/* ************************************************************************** */
-/*                         BACKGROUND RENDERING                              */
-/* ************************************************************************** */
-
-/**
- * @brief Create a TRGB color value from individual components
- */
 int	create_trgb_color(int transparency, int red, int green, int blue)
 {
 	return (transparency << 24 | red << 16 | green << 8 | blue);
 }
 
-/**
- * @brief Render the floor and ceiling background
- */
 void	render_background_colors(t_game *game)
 {
 	int	screen_x;

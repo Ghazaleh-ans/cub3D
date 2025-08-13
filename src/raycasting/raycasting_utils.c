@@ -6,19 +6,12 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:53:26 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 17:13:03 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 12:57:51 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-/* ************************************************************************** */
-/*                           TEXTURE SAMPLING                                */
-/* ************************************************************************** */
-
-/**
- * @brief Get the appropriate texture based on direction index
- */
 static t_image	*get_texture_by_index(t_game *game, int texture_index)
 {
 	if (texture_index == NORTH)
@@ -29,16 +22,9 @@ static t_image	*get_texture_by_index(t_game *game, int texture_index)
 		return (&game->textures.east);
 	else if (texture_index == WEST)
 		return (&game->textures.west);
-	return (&game->textures.north); /* fallback */
+	return (&game->textures.north);
 }
 
-/**
- * @brief Get color value from texture at specified coordinates
- * 
- * This function samples a color from a texture image at the given coordinates.
- * It directly accesses the image buffer for maximum performance during
- * real-time rendering.
- */
 int	get_texture_color(t_game *game, int texture_x, int texture_y, int texture_index)
 {
 	char		*pixel_address;

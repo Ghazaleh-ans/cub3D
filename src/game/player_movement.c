@@ -6,22 +6,12 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:51:12 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 17:11:12 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 12:59:26 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-/* ************************************************************************** */
-/*                           PLAYER MOVEMENT WITH COLLISION                  */
-/* ************************************************************************** */
-
-/**
- * @brief Move player with collision detection and minimap updates
- * 
- * This function handles player movement with comprehensive collision detection.
- * Independent axis checking allows sliding along walls.
- */
 void	move_player_with_collision(t_game *game, double delta_x, 
 		double delta_y, char direction_sign)
 {
@@ -53,7 +43,6 @@ void	move_player_with_collision(t_game *game, double delta_x,
 		if (game->map.grid[new_grid_y][(int)game->player.pos_x] != '1')
 			game->player.pos_y -= delta_y;
 	}
-	
 	#ifdef BONUS
 	if ((int)game->player.pos_x != previous_grid_x || 
 		(int)game->player.pos_y != previous_grid_y)
@@ -66,16 +55,6 @@ void	move_player_with_collision(t_game *game, double delta_x,
 	#endif
 }
 
-/* ************************************************************************** */
-/*                           PLAYER VIEW ROTATION                            */
-/* ************************************************************************** */
-
-/**
- * @brief Rotate player view direction and camera plane
- * 
- * This function implements smooth view rotation using rotation matrices.
- * Both the player direction vector and camera plane must be rotated together.
- */
 void	rotate_player_view(t_game *game, double rotation_speed)
 {
 	double	temp_dir_x;
@@ -85,15 +64,11 @@ void	rotate_player_view(t_game *game, double rotation_speed)
 
 	cos_rotation = cos(rotation_speed);
 	sin_rotation = sin(rotation_speed);
-	
-	/* Rotate direction vector */
 	temp_dir_x = game->player.dir_x;
 	game->player.dir_x = game->player.dir_x * cos_rotation - 
 		game->player.dir_y * sin_rotation;
 	game->player.dir_y = temp_dir_x * sin_rotation + 
 		game->player.dir_y * cos_rotation;
-	
-	/* Rotate camera plane */
 	temp_plane_x = game->player.plane_x;
 	game->player.plane_x = game->player.plane_x * cos_rotation - 
 		game->player.plane_y * sin_rotation;
