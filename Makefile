@@ -118,7 +118,17 @@ CLEAN			= 🧹
 # ================================== RULES =================================== #
 
 # Default target
-all: $(LIBFT) $(MLX_LIB) $(OBJ_DIR) $(NAME)
+all: check_build_type $(LIBFT) $(MLX_LIB) $(OBJ_DIR) $(NAME)
+
+# Check if we need to rebuild due to build type change
+check_build_type:
+	@if [ -f .bonus_flag ] && [ ! "$(BONUS)" = "1" ]; then \
+		echo "$(YELLOW)⚠️  Previous build was bonus, cleaning for regular build...$(RESET)"; \
+		$(RM) $(OBJ_DIR) $(NAME) .bonus_flag; \
+	elif [ ! -f .bonus_flag ] && [ "$(BONUS)" = "1" ]; then \
+		echo "$(YELLOW)⚠️  Previous build was regular, cleaning for bonus build...$(RESET)"; \
+		$(RM) $(OBJ_DIR) $(NAME); \
+	fi
 
 # Create object directory
 $(OBJ_DIR):
@@ -142,6 +152,9 @@ endif
 $(NAME): $(OBJS) Makefile
 	@echo "$(BUILD) $(GREEN)Compiling $(NAME)...$(RESET)"
 	@$(CC) $(CFLAGS) $(OBJS) -L$(LIBFT_DIR) -lft $(MLX_FLAGS) $(MATH_LIB) -o $(NAME)
+ifdef BONUS
+	@touch .bonus_flag
+endif
 	@echo "$(SUCCESS) $(YELLOW)Compiling $(NAME) FINISHED$(RESET)"
 
 # Compile object files
@@ -153,6 +166,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 # Clean object files
 clean:
 	@$(RM) $(OBJ_DIR)
+	@$(RM) .bonus_flag
 	@$(MAKE) $(LIBFT_DIR) clean --no-print-directory
 ifdef MLX_DIR
 	@if [ -d "$(MLX_DIR)" ]; then $(MAKE) $(MLX_DIR) clean --no-print-directory; fi
@@ -171,11 +185,15 @@ endif
 # Rebuild everything
 re: fclean all
 
-# Bonus target (with additional features) - independent and clean build
-bonus: fclean
-	@echo "$(BUILD) $(MAGENTA)Building bonus version...$(RESET)"
-	@$(MAKE) . BONUS=1 --no-print-directory
-	@echo "$(MAGENTA)$(SUCCESS) Bonus features enabled!$(RESET)"
+# Bonus target (with additional features) - smart rebuild
+bonus: 
+	@if [ -f .bonus_flag ] && [ -f $(NAME) ] && [ "$(shell find $(SRC_DIR) -name '*.c' -newer .bonus_flag 2>/dev/null)" = "" ]; then \
+		echo "$(MAGENTA)$(SUCCESS) Bonus version already up to date!$(RESET)"; \
+	else \
+		echo "$(BUILD) $(MAGENTA)Building bonus version...$(RESET)"; \
+		$(MAKE) . BONUS=1 --no-print-directory; \
+		echo "$(MAGENTA)$(SUCCESS) Bonus features enabled!$(RESET)"; \
+	fi
 
 # Help target
 help:
@@ -243,4 +261,4 @@ endif
 	@echo "  MLX Flags: $(GREEN)$(MLX_FLAGS)$(RESET)"
 
 # Declare phony targets
-.PHONY: all clean fclean re bonus help norm test install-deps info
+.PHONY: all clean fclean re bonus help norm test install-deps info check_build_type
