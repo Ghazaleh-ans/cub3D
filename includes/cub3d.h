@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 17:09:50 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 17:04:35 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,13 @@ enum e_direction
 /* ========================================================================== */
 
 void	init_game_structure(t_game *game);
+
+/* ========================================================================== */
+/*                            VALIDATION FUNCTIONS                           */
+/* ========================================================================== */
+int		is_valid_file_descriptor(int fd);
+int		validate_arguments(int argc, char **argv);
+int		is_parseable_map_file(t_game *game, int fd);
 int		validate_input_file(char *filename);
 
 /* ========================================================================== */
@@ -83,8 +90,10 @@ int		validate_input_file(char *filename);
 /* ========================================================================== */
 
 void	destroy_mlx_images(t_game *game);
+void	cleanup_mlx_resources(t_game *game);
 void	free_texture_paths(t_game *game);
 void	free_string_array(char **array);
+void	free_parsing_buffers(t_game *game);
 int		clean_exit_program(t_game *game);
 
 /* ========================================================================== */
@@ -175,7 +184,6 @@ int		get_texture_color(t_game *game, int tex_x, int tex_y, int texture_index);
 
 void	put_pixel_to_image(t_game *game, int x, int y, int color);
 void	draw_wall_column(t_game *game, int screen_x);
-void	calculate_texture_coordinates(t_game *game, int line_start, int line_height);
 int		render_frame(t_game *game);
 
 /* ========================================================================== */
@@ -190,6 +198,7 @@ void	render_background_colors(t_game *game);
 /* ========================================================================== */
 
 #ifdef BONUS
+void	init_minimap_system(t_game *game);
 void	draw_minimap_display(t_game *game);
 void	update_minimap_player_position(t_game *game, int previous_x, int previous_y);
 void	put_pixel_to_minimap(t_game *game, int x, int y, int color);

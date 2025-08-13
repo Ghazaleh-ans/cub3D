@@ -3,7 +3,7 @@ NAME			= cub3D
 
 # Compiler and flags
 CC				= cc
-CFLAGS			= -Wall -Wextra -Werror -O3 -g3
+CFLAGS			= -Wall -Wextra -Werror -O3
 
 # Directories
 SRC_DIR			= src
@@ -19,7 +19,11 @@ RM				= rm -rf
 
 # Source files (updated to match your original structure)
 MAIN_FILES		= main.c \
-				  memory_management.c
+				  memory_management.c \
+				  initialize_game_struct.c \
+				  validations.c \
+				  destroy_mlx_memory.c \
+				  free_memory.c \
 
 PARSING_FILES	= parsing/parse_main.c \
 				  parsing/parse_utils.c \
@@ -29,12 +33,14 @@ PARSING_FILES	= parsing/parse_main.c \
 
 GAME_FILES		= game/game_init.c \
 				  game/input_handling.c \
-				  game/player_movement.c
+				  game/player_movement.c \
+				  game/game_init_bonus.c
 
 RAYCAST_FILES	= raycasting/raycasting.c \
 				  raycasting/raycasting_utils.c \
 				  raycasting/rendering.c \
-				  raycasting/drawing.c
+				  raycasting/drawing.c \
+				  raycasting/drawing_utils.c \
 
 # Bonus files (minimap is bonus feature)
 BONUS_FILES		= raycasting/minimap.c
@@ -112,7 +118,17 @@ CLEAN			= 🧹
 # ================================== RULES =================================== #
 
 # Default target
-all: $(LIBFT) $(MLX_LIB) $(OBJ_DIR) $(NAME)
+all: check_build_type $(LIBFT) $(MLX_LIB) $(OBJ_DIR) $(NAME)
+
+# Check if we need to rebuild due to build type change
+check_build_type:
+	@if [ -f .bonus_flag ] && [ ! "$(BONUS)" = "1" ]; then \
+		echo "$(YELLOW)⚠️  Previous build was bonus, cleaning for regular build...$(RESET)"; \
+		$(RM) $(OBJ_DIR) $(NAME) .bonus_flag; \
+	elif [ ! -f .bonus_flag ] && [ "$(BONUS)" = "1" ]; then \
+		echo "$(YELLOW)⚠️  Previous build was regular, cleaning for bonus build...$(RESET)"; \
+		$(RM) $(OBJ_DIR) $(NAME); \
+	fi
 
 # Create object directory
 $(OBJ_DIR):
@@ -136,6 +152,9 @@ endif
 $(NAME): $(OBJS) Makefile
 	@echo "$(BUILD) $(GREEN)Compiling $(NAME)...$(RESET)"
 	@$(CC) $(CFLAGS) $(OBJS) -L$(LIBFT_DIR) -lft $(MLX_FLAGS) $(MATH_LIB) -o $(NAME)
+ifdef BONUS
+	@touch .bonus_flag
+endif
 	@echo "$(SUCCESS) $(YELLOW)Compiling $(NAME) FINISHED$(RESET)"
 
 # Compile object files
@@ -147,6 +166,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 # Clean object files
 clean:
 	@$(RM) $(OBJ_DIR)
+	@$(RM) .bonus_flag
 	@$(MAKE) $(LIBFT_DIR) clean --no-print-directory
 ifdef MLX_DIR
 	@if [ -d "$(MLX_DIR)" ]; then $(MAKE) $(MLX_DIR) clean --no-print-directory; fi
@@ -165,16 +185,15 @@ endif
 # Rebuild everything
 re: fclean all
 
-# Bonus target (with additional features) - independent and clean build
-bonus: fclean
-	@echo "$(BUILD) $(MAGENTA)Building bonus version...$(RESET)"
-	@$(MAKE) . BONUS=1 --no-print-directory
-	@echo "$(MAGENTA)$(SUCCESS) Bonus features enabled!$(RESET)"
-
-# Debug target with additional debugging flags
-debug: CFLAGS += -fsanitize=address -DDEBUG
-debug: all
-	@echo "$(CYAN)$(SUCCESS) Debug version compiled with AddressSanitizer!$(RESET)"
+# Bonus target (with additional features) - smart rebuild
+bonus: 
+	@if [ -f .bonus_flag ] && [ -f $(NAME) ] && [ "$(shell find $(SRC_DIR) -name '*.c' -newer .bonus_flag 2>/dev/null)" = "" ]; then \
+		echo "$(MAGENTA)$(SUCCESS) Bonus version already up to date!$(RESET)"; \
+	else \
+		echo "$(BUILD) $(MAGENTA)Building bonus version...$(RESET)"; \
+		$(MAKE) . BONUS=1 --no-print-directory; \
+		echo "$(MAGENTA)$(SUCCESS) Bonus features enabled!$(RESET)"; \
+	fi
 
 # Help target
 help:
@@ -184,7 +203,6 @@ help:
 	@echo "  $(GREEN)fclean$(RESET)  - Remove object files and executable"
 	@echo "  $(GREEN)re$(RESET)      - Rebuild the project"
 	@echo "  $(GREEN)bonus$(RESET)   - Build with bonus features"
-	@echo "  $(GREEN)debug$(RESET)   - Build debug version with AddressSanitizer"
 	@echo "  $(GREEN)help$(RESET)    - Show this help message"
 	@echo "  $(GREEN)info$(RESET)    - Show project information"
 
@@ -243,4 +261,4 @@ endif
 	@echo "  MLX Flags: $(GREEN)$(MLX_FLAGS)$(RESET)"
 
 # Declare phony targets
-.PHONY: all clean fclean re bonus debug help norm test install-deps info
+.PHONY: all clean fclean re bonus help norm test install-deps info check_build_type
