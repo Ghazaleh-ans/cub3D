@@ -9,7 +9,7 @@ CFLAGS			= -Wall -Wextra -Werror -O3
 SRC_DIR			= src
 OBJ_DIR			= obj
 INCLUDES_DIR	= includes
-LIBFT_DIR		= libft
+LIBFT_DIR		= Libft
 
 # Platform detection
 OS				= $(shell uname)
