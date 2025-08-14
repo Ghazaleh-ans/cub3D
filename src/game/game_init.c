@@ -6,11 +6,21 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:49:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/13 15:49:00 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/14 12:23:25 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
+
+void	init_player_input(t_game *game)
+{
+	game->player.key_w = 0;
+	game->player.key_s = 0;
+	game->player.key_a = 0;
+	game->player.key_d = 0;
+	game->player.key_left = 0;
+	game->player.key_right = 0;
+}
 
 void	handle_game_error(t_game *game, char *error_message)
 {
@@ -100,15 +110,19 @@ int	init_game_engine(t_game *game)
 	if (!game->mlx.window)
 		handle_game_error(game, "Error\nFailed to create game window\n");
 	init_mlx_images(game);
+	init_player_input(game);
 	#ifdef BONUS
 	init_minimap_system(game);
 	#endif
 	mlx_loop_hook(game->mlx.instance, &render_frame, game);
-	mlx_hook(game->mlx.window, 2, 1L << 0, handle_keyboard_input, game);
+	mlx_hook(game->mlx.window, 2, 1L << 0, handle_key_press, game);    // Key press
+	mlx_hook(game->mlx.window, 3, 1L << 1, handle_key_release, game);  // Key release
+	mlx_hook(game->mlx.window, 17, 1L << 0, clean_exit_program, game); // Window close
+	
 	#ifdef BONUS
 	mlx_hook(game->mlx.window, 6, 1L << 6, handle_mouse_rotation, game);
 	#endif
-	mlx_hook(game->mlx.window, 17, 1L << 0, clean_exit_program, game);
+	
 	mlx_loop(game->mlx.instance);
 	return (0);
 }
