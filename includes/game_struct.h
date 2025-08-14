@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:54:13 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/12 17:09:24 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/14 12:17:18 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,23 @@ typedef struct s_map
  */
 typedef struct s_player
 {
-	double		pos_x;				/* Current player X position */
-	double		pos_y;				/* Current player Y position */
-	double		dir_x;				/* Player direction vector X component */
-	double		dir_y;				/* Player direction vector Y component */
-	double		plane_x;			/* Camera plane X component (FOV) */
-	double		plane_y;			/* Camera plane Y component (FOV) */
-	char		initial_dir;		/* Initial player direction (N/S/E/W) */
-	double		move_speed;			/* Player movement speed */
-	double		rotate_speed;		/* Player rotation speed */
+	double		pos_x;
+	double		pos_y;
+	double		dir_x;
+	double		dir_y;
+	double		plane_x;
+	double		plane_y;
+	char		initial_dir;
+	double		move_speed;
+	double		rotate_speed;
+	
+	// Add key states for simultaneous input handling
+	int			key_w;		/* Forward movement */
+	int			key_s;		/* Backward movement */
+	int			key_a;		/* Strafe left */
+	int			key_d;		/* Strafe right */
+	int			key_left;	/* Turn left */
+	int			key_right;	/* Turn right */
 }	t_player;
 
 /**

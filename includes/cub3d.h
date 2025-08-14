@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/13 17:04:35 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/14 15:23:30 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ int		handle_mouse_rotation(int mouse_x, int mouse_y, t_game *game);
 /*                           PLAYER MOVEMENT                                 */
 /* ========================================================================== */
 
-void	move_player_with_collision(t_game *game, double delta_x, double delta_y, char direction_sign);
+// void	move_player_with_collision(t_game *game, double delta_x, double delta_y, char direction_sign);
 void	rotate_player_view(t_game *game, double rotation_speed);
 
 /* ========================================================================== */
@@ -205,4 +205,14 @@ void	put_pixel_to_minimap(t_game *game, int x, int y, int color);
 void	draw_minimap_case(t_game *game, int x, int y, int color);
 #endif
 
+
+/* Input handling */
+int		handle_key_press(int keycode, t_game *game);
+int		handle_key_release(int keycode, t_game *game);
+void	process_movement_input(t_game *game);
+void	init_player_input(t_game *game);
+
+/* Updated movement functions */
+void	move_player_with_collision(t_game *game, double delta_x, double delta_y);
+void	rotate_player_view(t_game *game, double rotation_speed);
 #endif
