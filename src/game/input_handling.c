@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:50:44 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/14 15:25:50 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/14 16:10:02 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,6 @@ int	handle_key_press(int keycode, t_game *game)
 	return (0);
 }
 
-/**
- * @brief Handle key release events
- */
 int	handle_key_release(int keycode, t_game *game)
 {
 	if (keycode == KEY_W)
@@ -51,43 +48,38 @@ int	handle_key_release(int keycode, t_game *game)
 	return (0);
 }
 
-/**
- * @brief Process all active movement inputs each frame
- */
+static void	process_player_key_input(t_game *game, double *move_x, double *move_y)
+{
+	if (game->player.key_w)
+	{
+		*move_x += game->player.dir_x * game->player.move_speed;
+		*move_y += game->player.dir_y * game->player.move_speed;
+	}
+	if (game->player.key_s)
+	{
+		*move_x -= game->player.dir_x * game->player.move_speed;
+		*move_y -= game->player.dir_y * game->player.move_speed;
+	}
+	if (game->player.key_a)
+	{
+		*move_x -= game->player.plane_x * game->player.move_speed;
+		*move_y -= game->player.plane_y * game->player.move_speed;
+	}
+	if (game->player.key_d)
+	{
+		*move_x += game->player.plane_x * game->player.move_speed;
+		*move_y += game->player.plane_y * game->player.move_speed;
+	}
+}
+
 void	process_movement_input(t_game *game)
 {
 	double	move_x = 0.0;
 	double	move_y = 0.0;
-	
-	// Forward/Backward movement (relative to player's view direction)
-	if (game->player.key_w)
-	{
-		move_x += game->player.dir_x * game->player.move_speed;
-		move_y += game->player.dir_y * game->player.move_speed;
-	}
-	if (game->player.key_s)
-	{
-		move_x -= game->player.dir_x * game->player.move_speed;
-		move_y -= game->player.dir_y * game->player.move_speed;
-	}
-	
-	// Strafe left/right (relative to player's view direction)
-	if (game->player.key_a)
-	{
-		move_x -= game->player.plane_x * game->player.move_speed;
-		move_y -= game->player.plane_y * game->player.move_speed;
-	}
-	if (game->player.key_d)
-	{
-		move_x += game->player.plane_x * game->player.move_speed;
-		move_y += game->player.plane_y * game->player.move_speed;
-	}
-	
-	// Apply movement with collision detection
+
+	process_player_key_input(game, &move_x, &move_y);
 	if (move_x != 0.0 || move_y != 0.0)
 		move_player_with_collision(game, move_x, move_y);
-	
-	// Handle rotation
 	if (game->player.key_left)
 		rotate_player_view(game, -game->player.rotate_speed);
 	if (game->player.key_right)
