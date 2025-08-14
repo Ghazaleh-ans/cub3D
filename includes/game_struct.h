@@ -144,8 +144,6 @@ typedef struct s_game
 	t_textures		textures;		/* Texture management */
 }	t_game;
 
-/* Legacy typedef for backward compatibility */
-typedef t_game t_game_map;
 
 /* ************************************************************************** */
 /*                           STRUCTURE DOCUMENTATION                         */
