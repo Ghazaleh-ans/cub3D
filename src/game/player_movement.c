@@ -6,15 +6,12 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:51:12 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/15 16:31:50 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/14 15:45:51 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-/**
- * @brief Move player with collision detection (adapted for new map format)
- */
 void	move_player_with_collision(t_game *game, double delta_x, double delta_y)
 {
 	int	previous_grid_x;
@@ -24,21 +21,13 @@ void	move_player_with_collision(t_game *game, double delta_x, double delta_y)
 
 	previous_grid_x = (int)game->player.pos_x;
 	previous_grid_y = (int)game->player.pos_y;
-	
-	/* Check X movement collision using new map format */
 	new_x = game->player.pos_x + delta_x;
-	if (game->map[(int)game->player.pos_y][(int)new_x] != '1')
+	if (game->map.grid[(int)game->player.pos_y][(int)new_x] != '1')
 		game->player.pos_x = new_x;
 	
-	/* Check Y movement collision using new map format */
 	new_y = game->player.pos_y + delta_y;
-	if (game->map[(int)new_y][(int)game->player.pos_x] != '1')
+	if (game->map.grid[(int)new_y][(int)game->player.pos_x] != '1')
 		game->player.pos_y = new_y;
-	
-	/* Update parsing system player position for consistency */
-	game->player.x = game->player.pos_x;
-	game->player.y = game->player.pos_y;
-	
 	#ifdef BONUS
 	if ((int)game->player.pos_x != previous_grid_x || 
 		(int)game->player.pos_y != previous_grid_y)

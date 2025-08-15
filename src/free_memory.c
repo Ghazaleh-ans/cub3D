@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 17:03:01 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/15 16:49:07 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 17:04:20 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,16 +52,16 @@ void	free_string_array(char **string_array)
 	free(string_array);
 }
 
-// void	free_parsing_buffers(t_game *game)
-// {
-// 	if (game->map.current_line)
-// 	{
-// 		free(game->map.current_line);
-// 		game->map.current_line = NULL;
-// 	}
-// 	if (game->map.data_buffer)
-// 	{
-// 		free(game->map.data_buffer);
-// 		game->map.data_buffer = NULL;
-// 	}
-// }
+void	free_parsing_buffers(t_game *game)
+{
+	if (game->map.current_line)
+	{
+		free(game->map.current_line);
+		game->map.current_line = NULL;
+	}
+	if (game->map.data_buffer)
+	{
+		free(game->map.data_buffer);
+		game->map.data_buffer = NULL;
+	}
+}

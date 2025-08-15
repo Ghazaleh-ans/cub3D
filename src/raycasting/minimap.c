@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:53:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/15 16:57:18 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 12:58:35 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 #ifdef BONUS
 
-/**
- * @brief Draw minimap display (adapted for new map format)
- */
 void	draw_minimap_display(t_game *game)
 {
 	int	row_index;
@@ -24,23 +21,19 @@ void	draw_minimap_display(t_game *game)
 	int	cell_color;
 
 	row_index = 0;
-	while (row_index < game->map_height && game->map[row_index])
+	while (game->map.grid[row_index])
 	{
 		col_index = 0;
-		while (col_index < game->map_width && game->map[row_index][col_index])
+		while (game->map.grid[row_index][col_index])
 		{
-			if (game->map[row_index][col_index] == '1')
+			if (game->map.grid[row_index][col_index] == '1')
 				cell_color = COLOR_BLACK;
-			else if (game->map[row_index][col_index] == '0')
+			else if (game->map.grid[row_index][col_index] == '0')
 			{
-				/* Use new t_color struct format */
-				cell_color = create_trgb_color(0, game->ceiling_color.red,
-					game->ceiling_color.green, game->ceiling_color.blue);
+				cell_color = create_trgb_color(0, game->map.ceiling_rgb[0],
+					game->map.ceiling_rgb[1], game->map.ceiling_rgb[2]);
 			}
-			else if (game->map[row_index][col_index] == 'N' || 
-					 game->map[row_index][col_index] == 'S' ||
-					 game->map[row_index][col_index] == 'E' ||
-					 game->map[row_index][col_index] == 'W')
+			else if (is_character_valid(game->map.grid[row_index][col_index], "NSEW"))
 				cell_color = COLOR_PLAYER;
 			else
 				cell_color = COLOR_WALL;
@@ -61,14 +54,11 @@ void	update_minimap_player_position(t_game *game, int previous_x, int previous_y
 		
 	if ((int)game->player.pos_x != previous_x || (int)game->player.pos_y != previous_y)
 	{
-		if (game->map[previous_y][previous_x] == '1')
+		if (game->map.grid[previous_y][previous_x] == '1')
 			background_color = COLOR_BLACK;
 		else
-		{
-			/* Use new t_color struct format */
-			background_color = create_trgb_color(0, game->ceiling_color.red,
-				game->ceiling_color.green, game->ceiling_color.blue);
-		}
+			background_color = create_trgb_color(0, game->map.ceiling_rgb[0],
+				game->map.ceiling_rgb[1], game->map.ceiling_rgb[2]);
 		
 		draw_minimap_case(game, previous_x * MINIMAP_SCALE, 
 			previous_y * MINIMAP_SCALE, background_color);
@@ -105,30 +95,4 @@ void	draw_minimap_case(t_game *game, int start_x, int start_y, int color)
 		pixel_row++;
 	}
 }
-
-/**
- * @brief Initialize minimap system (adapted for new map format)
- */
-void	init_minimap_system(t_game *game)
-{
-	int	minimap_width;
-	int	minimap_height;
-
-	minimap_width = game->map_width * MINIMAP_SCALE;
-	minimap_height = game->map_height * MINIMAP_SCALE;
-	
-	game->textures.minimap.mlx_ptr = mlx_new_image(game->mlx.instance,
-		minimap_width, minimap_height);
-	if (!game->textures.minimap.mlx_ptr)
-		handle_game_error(game, "Error\nFailed to create minimap\n");
-		
-	game->textures.minimap.data = mlx_get_data_addr(game->textures.minimap.mlx_ptr,
-		&game->textures.minimap.bits_per_pixel, &game->textures.minimap.line_length,
-		&game->textures.minimap.endian);
-	if (!game->textures.minimap.data)
-		handle_game_error(game, "Error\nFailed to initialize minimap data\n");
-		
-	draw_minimap_display(game);
-}
-
 #endif
