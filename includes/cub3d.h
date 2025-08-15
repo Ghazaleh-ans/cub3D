@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/14 15:50:13 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/15 17:13:59 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,12 @@
 # include <mlx.h>
 # include <math.h>
 # include <limits.h>
+# include <stdbool.h>
+# include <stdint.h>
+# include <string.h>
+# include <errno.h>
+# include <sys/types.h>
+# include <sys/stat.h>
 # include "keys.h"
 # include "game_struct.h"
 # include "../Libft/libft.h"
@@ -52,6 +58,28 @@
 # define COLOR_PLAYER	0xEEEE20	/* Player color on minimap */
 # define COLOR_WALL		0x050505	/* Wall color on minimap */
 
+/* Map characters */
+# define WALL '1'
+# define EMPTY '0'
+# define NORTH 'N'
+# define SOUTH 'S'
+# define EAST 'E'
+# define WEST 'W'
+# define SPACE ' '
+# define MAX_MAP_LINES 1000
+
+/* Error messages */
+# define ERR_FILE_EXT "File must have .cub extension"
+# define ERR_FILE_OPEN "Cannot open file"
+# define ERR_MALLOC "Memory allocation failed"
+# define ERR_INVALID "Invalid map"
+# define ERR_NO_PLAYER "No player found in map"
+# define ERR_MULTI_PLAYER "Multiple players found"
+# define ERR_MAP_NOT_CLOSED "Map is not surrounded by walls"
+# define ERR_INVALID_CHAR "Invalid character in map"
+# define ERR_MISSING_TEXTURE "Missing texture path"
+# define ERR_INVALID_COLOR "Invalid color format"
+
 /* ************************************************************************** */
 /*                               ENUMERATIONS                                 */
 /* ************************************************************************** */
@@ -61,11 +89,13 @@
  */
 enum e_direction
 {
-	NORTH = 0,	/* North-facing wall */
-	SOUTH = 1,	/* South-facing wall */
-	EAST = 2,	/* East-facing wall */
-	WEST = 3	/* West-facing wall */
+	NORTH_DIR = 0,	/* North-facing wall */
+	SOUTH_DIR = 1,	/* South-facing wall */
+	EAST_DIR = 2,	/* East-facing wall */
+	WEST_DIR = 3	/* West-facing wall */
 };
+
+/* Note: e_texture_type is defined in game_struct.h */
 
 /* ************************************************************************** */
 /*                           FUNCTION PROTOTYPES                             */
@@ -95,49 +125,43 @@ void	free_texture_paths(t_game *game);
 void	free_string_array(char **array);
 void	free_parsing_buffers(t_game *game);
 int		clean_exit_program(t_game *game);
+void	cleanup_map(t_game *map);
 
 /* ========================================================================== */
-/*                            PARSING FUNCTIONS                              */
+/*                         NEW PARSING FUNCTIONS                             */
 /* ========================================================================== */
 
-void	handle_parsing_error(t_game *game, char *error_message);
-void	read_and_parse_map_file(int file_descriptor, t_game *game);
-int		parse_map_file(t_game *game, int file_descriptor);
+// Main parsing functions
+int		parse_file(t_game *map, char *filename);
+int		parse_map_line(char *line, t_game *map, int fd);
+int		parse_texture(char *line, t_game *map);
+int		parse_width(t_game *map);
+t_color	parse_color(char *line);
 
-/* ========================================================================== */
-/*                            PARSING UTILITIES                              */
-/* ========================================================================== */
+// Validation functions
+bool	validate_texture(t_game *map);
+bool	validate_color(t_game *map);
+bool	validate_map(t_game *map);
+bool	validate_file_extension(char *filename);
+bool	validate_player(t_game *map);
+bool	validate_char(t_game *map);
+bool	validate_map_walls(t_game *game);
 
-int		is_character_valid(char character, char *valid_chars);
-int		get_string_length_no_newline(char *string);
-char	*resize_string_to_size(char *original_string, int target_size);
-char	*join_strings_with_separator(char *string1, char *string2);
+// Error handling
+void	print_error(char *message);
 
-/* ========================================================================== */
-/*                          WALL VALIDATION                                  */
-/* ========================================================================== */
+// Helper functions
+int		split_len(char **split);
+int		free_double_ptr(char **ptr);
+int		space_count(char *line);
+int		flood_fill(char **map, int y, int x, t_game *game);
+void	print_map(t_game *map);
+void	init_map(t_game *map);
+char	**create_temp_map(t_game *game);
 
-int		validate_map_column(char **map_array, int row, int col, int total_rows);
-int		validate_vertical_walls(t_game *game, int start_row, int start_col);
-int		validate_map_line(t_game *game, char *line_to_check, int start_col);
-int		validate_horizontal_walls(t_game *game, int start_row, int start_col);
-int		validate_map_walls(t_game *game);
-
-/* ========================================================================== */
-/*                          MAP STATISTICS                                   */
-/* ========================================================================== */
-
-void	set_player_position_and_direction(t_game *game, char direction, int row, int col);
-void	calculate_map_dimensions(t_game *game, char **map_array, int start_row, int start_col);
-int		extract_map_statistics(t_game *game, char *config_line);
-
-/* ========================================================================== */
-/*                        RGB AND TEXTURE PARSING                           */
-/* ========================================================================== */
-
-void	extract_texture_path(t_game *game, char **texture_path, char **split_line);
-int		validate_rgb_line_format(char *rgb_line);
-void	extract_rgb_colors(t_game *game, int *rgb_array, char **split_line);
+// Migration helpers
+void	convert_parsing_to_rendering(t_game *game);
+int		get_texture_index_from_direction(char direction);
 
 /* ========================================================================== */
 /*                             GAME INITIALIZATION                           */

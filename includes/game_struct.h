@@ -6,12 +6,21 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:54:13 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/14 12:17:18 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/15 16:44:32 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GAME_STRUCT_H
 # define GAME_STRUCT_H
+
+/**
+ * @brief Color structure for RGB values
+ */
+typedef struct s_color {
+	int	red;
+	int	green;
+	int	blue;
+} t_color;
 
 /**
  * @brief Image structure for MLX image handling
@@ -43,41 +52,32 @@ typedef struct s_mlx
 }	t_mlx;
 
 /**
- * @brief Map configuration and data
- */
-typedef struct s_map
-{
-	char		**grid;				/* 2D array representing the game map */
-	int			width;				/* Width of the map in grid units */
-	int			height;				/* Height of the map in grid units */
-	int			floor_rgb[3];		/* Floor color RGB values [R,G,B] */
-	int			ceiling_rgb[3];		/* Ceiling color RGB values [R,G,B] */
-	char		*current_line;		/* Current line being parsed */
-	char		*data_buffer;		/* Buffer for accumulating map data */
-}	t_map;
-
-/**
  * @brief Player position, direction and movement
  */
 typedef struct s_player
 {
-	double		pos_x;
-	double		pos_y;
-	double		dir_x;
-	double		dir_y;
-	double		plane_x;
-	double		plane_y;
-	char		initial_dir;
-	double		move_speed;
-	double		rotate_speed;
+	double		x;					/* Current player X position (new parsing) */
+	double		y;					/* Current player Y position (new parsing) */
+	char		direction;			/* Player direction character (new parsing) */
 	
-	// Add key states for simultaneous input handling
-	int			key_w;		/* Forward movement */
-	int			key_s;		/* Backward movement */
-	int			key_a;		/* Strafe left */
-	int			key_d;		/* Strafe right */
-	int			key_left;	/* Turn left */
-	int			key_right;	/* Turn right */
+	/* Rendering system fields (from original) */
+	double		pos_x;				/* Current player X position */
+	double		pos_y;				/* Current player Y position */
+	double		dir_x;				/* Player direction vector X component */
+	double		dir_y;				/* Player direction vector Y component */
+	double		plane_x;			/* Camera plane X component (FOV) */
+	double		plane_y;			/* Camera plane Y component (FOV) */
+	char		initial_dir;		/* Initial player direction (N/S/E/W) */
+	double		move_speed;			/* Player movement speed */
+	double		rotate_speed;		/* Player rotation speed */
+	
+	/* Input handling */
+	int			key_w;				/* Forward movement */
+	int			key_s;				/* Backward movement */
+	int			key_a;				/* Strafe left */
+	int			key_d;				/* Strafe right */
+	int			key_left;			/* Turn left */
+	int			key_right;			/* Turn right */
 }	t_player;
 
 /**
@@ -132,58 +132,73 @@ typedef struct s_textures
 }	t_textures;
 
 /**
+ * @brief Texture identifiers for array access
+ */
+typedef enum e_texture_type
+{
+	NORTH_TEX,
+	SOUTH_TEX,
+	WEST_TEX,
+	EAST_TEX,
+	TEX_COUNT
+}	t_texture_type;
+
+/**
  * @brief Main game structure - orchestrates all subsystems
+ * 
+ * This structure combines both parsing approaches:
+ * - Original structured approach for rendering
+ * - New simple approach for parsing
  */
 typedef struct s_game
 {
+	/* MLX and rendering subsystems (original structure) */
 	t_mlx			mlx;			/* MLX window and display management */
-	t_map			map;			/* Map data and configuration */
-	t_player		player;			/* Player state and movement */
 	t_ray			ray;			/* Raycasting calculations */
 	t_wall			wall;			/* Wall rendering data */
-	t_textures		textures;		/* Texture management */
+	t_textures		textures;		/* Texture management (structured) */
+	
+	/* Parsing data (new parsing system) */
+	char			**map;			/* 2D array representing the game map */
+	int				map_width;		/* Width of the map in grid units */
+	int				map_height;		/* Height of the map in grid units */
+	char			*textures_paths[TEX_COUNT];	/* Texture file paths */
+	t_color			floor_color;	/* Floor color RGB values */
+	t_color			ceiling_color;	/* Ceiling color RGB values */
+	t_player		player;			/* Player state and movement */
+	
+	/* Legacy compatibility fields for rendering */
+	char			*current_line;	/* Current line being parsed */
+	char			*data_buffer;	/* Buffer for accumulating map data */
 }	t_game;
-
 
 /* ************************************************************************** */
 /*                           STRUCTURE DOCUMENTATION                         */
 /* ************************************************************************** */
 
 /*
- * REFACTORED STRUCTURE BENEFITS:
+ * MIGRATION STRATEGY:
  * 
- * 1. SEPARATION OF CONCERNS:
- *    - Each struct handles a specific aspect of the game
- *    - Easier to understand and maintain individual components
- *    - Clear relationships between different systems
+ * 1. DUAL COMPATIBILITY:
+ *    - Supports both parsing systems during transition
+ *    - New parsing uses: game->map, game->textures_paths[], game->floor_color
+ *    - Rendering uses: game->textures.north.path, game->mlx.instance
  * 
- * 2. IMPROVED READABILITY:
- *    - Shorter, more descriptive member names
- *    - Logical grouping of related data
- *    - Self-documenting structure organization
+ * 2. DATA CONVERSION:
+ *    - After parsing: convert t_color to int arrays for rendering
+ *    - Copy texture paths from textures_paths[] to textures.*.path
+ *    - Copy map from char **map to structured format if needed
  * 
- * 3. EASIER DEBUGGING:
- *    - Can examine specific subsystems independently
- *    - Clear data flow between components
- *    - Reduced complexity per structure
- * 
- * 4. BETTER MAINTAINABILITY:
- *    - Changes to one subsystem don't affect others
- *    - Easy to add new features to specific areas
- *    - Clear interface boundaries
+ * 3. GRADUAL MIGRATION:
+ *    - Phase 1: Use new parsing with compatibility layer
+ *    - Phase 2: Update rendering to use new structure
+ *    - Phase 3: Remove legacy fields
  * 
  * USAGE PATTERNS:
  * 
- * - Access MLX data: game->mlx.instance, game->mlx.window
- * - Access map data: game->map.grid, game->map.width
- * - Access player: game->player.pos_x, game->player.dir_x
- * - Access textures: game->textures.north.mlx_ptr
- * - Access raycasting: game->ray.dir_x, game->ray.side_dist_x
- * 
- * MEMORY MANAGEMENT:
- * - Each subsystem can have its own cleanup function
- * - Clear ownership of pointers and resources
- * - Easier to track memory allocation/deallocation
+ * - Parsing: game->map[y][x], game->textures_paths[NORTH_TEX]
+ * - Rendering: game->textures.north.mlx_ptr, game->mlx.instance
+ * - Player: game->player.x (parsing), game->player.pos_x (rendering)
  */
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:13:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/13 12:44:44 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/15 16:32:35 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,9 @@ void	calculate_step_and_side_distances(t_game *game)
 	}
 }
 
+/**
+ * @brief Execute DDA algorithm (adapted for new map format)
+ */
 void	execute_dda_algorithm(t_game *game)
 {
 	int	wall_hit;
@@ -71,7 +74,8 @@ void	execute_dda_algorithm(t_game *game)
 			game->ray.map_y += game->ray.step_y;
 			game->ray.side = 1;
 		}
-		if (game->map.grid[game->ray.map_y][game->ray.map_x] == '1')
+		/* Check wall collision using new map format */
+		if (game->map[game->ray.map_y][game->ray.map_x] == '1')
 			wall_hit = 1;
 	}
 }

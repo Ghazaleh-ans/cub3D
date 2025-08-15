@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:15:48 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/13 16:37:40 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/15 16:56:51 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,12 @@ int	create_trgb_color(int transparency, int red, int green, int blue)
 	return (transparency << 24 | red << 16 | green << 8 | blue);
 }
 
+/**
+ * @brief Render background colors (updated for new color system)
+ * 
+ * This function now uses the t_color structs from the new parsing system
+ * instead of the old int arrays.
+ */
 void	render_background_colors(t_game *game)
 {
 	int	screen_x;
@@ -36,10 +42,11 @@ void	render_background_colors(t_game *game)
 	int	ceiling_color;
 	int	floor_color;
 
-	ceiling_color = create_trgb_color(0, game->map.ceiling_rgb[0],
-		game->map.ceiling_rgb[1], game->map.ceiling_rgb[2]);
-	floor_color = create_trgb_color(0, game->map.floor_rgb[0],
-		game->map.floor_rgb[1], game->map.floor_rgb[2]);
+	/* Convert t_color structs to TRGB format for rendering */
+	ceiling_color = create_trgb_color(0, game->ceiling_color.red,
+		game->ceiling_color.green, game->ceiling_color.blue);
+	floor_color = create_trgb_color(0, game->floor_color.red,
+		game->floor_color.green, game->floor_color.blue);
 		
 	screen_x = 0;
 	while (screen_x < game->mlx.width)
