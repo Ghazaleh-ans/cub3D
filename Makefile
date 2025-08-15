@@ -23,20 +23,13 @@ MAIN_FILES		= main.c \
 				  initialize_game_struct.c \
 				  validations.c \
 				  destroy_mlx_memory.c \
-				  migration.c \
-				  conversion.c \
+				  free_memory.c \
 
 PARSING_FILES	= parsing/parse_main.c \
 				  parsing/parse_utils.c \
 				  parsing/parse_rgb_texture.c \
 				  parsing/map_statistics.c \
-				  parsing/wall_validation.c \
-				  parsing/clean.c\
-				  parsing/error_handling.c \
-				  parsing/helper_functions.c \
-				  parsing/parsing.c \
-				  parsing/validation.c \
-				  parsing/validation1.c \
+				  parsing/wall_validation.c
 
 GAME_FILES		= game/game_init.c \
 				  game/input_handling.c \

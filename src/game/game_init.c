@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:49:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/15 17:22:29 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/14 12:23:25 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ void	handle_game_error(t_game *game, char *error_message)
 {
 	printf("%s", error_message);
 	free_texture_paths(game);
-	if (game->map)
-		free_string_array(game->map);
+	free_string_array(game->map.grid);
 	destroy_mlx_images(game);
 	if (game->mlx.window && game->mlx.instance)
 		mlx_destroy_window(game->mlx.instance, game->mlx.window);
@@ -39,46 +38,31 @@ void	handle_game_error(t_game *game, char *error_message)
 	exit(EXIT_FAILURE);
 }
 
-
 void	init_game_settings(t_game *game)
 {
 	game->player.move_speed = MOVE_SPEED;
 	game->player.rotate_speed = ROTATION_SPEED;
 	game->mlx.width = DEFAULT_WIDTH;
 	game->mlx.height = DEFAULT_HEIGHT;
-	
-	/* Set direction and plane vectors based on player direction character */
-	if (game->player.direction == 'N')
+	if (game->player.initial_dir == 'N')
 	{
-		game->player.dir_x = 0.0;
-		game->player.dir_y = -1.0;
 		game->player.plane_x = 0.66;
 		game->player.plane_y = 0.0;
-		game->player.initial_dir = 'N';
 	}
-	else if (game->player.direction == 'S')
+	else if (game->player.initial_dir == 'S')
 	{
-		game->player.dir_x = 0.0;
-		game->player.dir_y = 1.0;
 		game->player.plane_x = -0.66;
 		game->player.plane_y = 0.0;
-		game->player.initial_dir = 'S';
 	}
-	else if (game->player.direction == 'W')
+	else if (game->player.initial_dir == 'W')
 	{
-		game->player.dir_x = -1.0;
-		game->player.dir_y = 0.0;
 		game->player.plane_x = 0.0;
 		game->player.plane_y = 0.66;
-		game->player.initial_dir = 'W';
 	}
-	else if (game->player.direction == 'E')
+	else if (game->player.initial_dir == 'E')
 	{
-		game->player.dir_x = 1.0;
-		game->player.dir_y = 0.0;
 		game->player.plane_x = 0.0;
 		game->player.plane_y = -0.66;
-		game->player.initial_dir = 'E';
 	}
 }
 
@@ -104,12 +88,10 @@ void	init_mlx_images(t_game *game)
 	load_texture_image(game, &game->textures.south);
 	load_texture_image(game, &game->textures.east);
 	load_texture_image(game, &game->textures.west);
-	
 	game->textures.screen.mlx_ptr = mlx_new_image(game->mlx.instance,
 		game->mlx.width, game->mlx.height);
 	if (!game->textures.screen.mlx_ptr)
 		handle_game_error(game, "Error\nFailed to create display buffer\n");
-		
 	game->textures.screen.data = mlx_get_data_addr(game->textures.screen.mlx_ptr,
 		&game->textures.screen.bits_per_pixel, &game->textures.screen.line_length,
 		&game->textures.screen.endian);
@@ -120,23 +102,18 @@ void	init_mlx_images(t_game *game)
 int	init_game_engine(t_game *game)
 {
 	init_game_settings(game);
-	
 	game->mlx.instance = mlx_init();
 	if (!game->mlx.instance)
 		handle_game_error(game, "Error\nFailed to initialize MLX\n");
-		
 	game->mlx.window = mlx_new_window(game->mlx.instance, 
 		game->mlx.width, game->mlx.height, "cub3D");
 	if (!game->mlx.window)
 		handle_game_error(game, "Error\nFailed to create game window\n");
-		
 	init_mlx_images(game);
 	init_player_input(game);
-	
 	#ifdef BONUS
 	init_minimap_system(game);
 	#endif
-	
 	mlx_loop_hook(game->mlx.instance, &render_frame, game);
 	mlx_hook(game->mlx.window, 2, 1L << 0, handle_key_press, game);    // Key press
 	mlx_hook(game->mlx.window, 3, 1L << 1, handle_key_release, game);  // Key release

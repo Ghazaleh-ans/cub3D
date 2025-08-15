@@ -6,61 +6,33 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:30:20 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/15 17:20:03 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/13 15:29:03 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-/**
- * @brief Main function using new parsing system (production version)
- */
 int	main(int argc, char **argv)
 {
 	t_game	game;
+	int		fd;
 
-	/* Validate command line arguments */
-	if (argc != 2)
-	{
-		printf("Error\nUsage: %s <map_file.cub>\n", argv[0]);
-		printf("Expected exactly one argument: path to .cub file\n");
+	if (!validate_arguments(argc, argv))
 		return (1);
-	}
-	
-	/* Validate file extension using new system */
-	if (!validate_file_extension(argv[1]))
-	{
-		print_error(ERR_FILE_EXT);
+	if (!validate_input_file(argv[1]))
 		return (2);
-	}
-	
-	/* Initialize game structure (dual compatibility) */
+	fd = open(argv[1], O_RDONLY);
+	if (!is_valid_file_descriptor(fd))
+		return (3);
 	init_game_structure(&game);
-	
-	/* Parse map file using new parsing system */
-	if (parse_file(&game, argv[1]) == EXIT_FAILURE)
-	{
-		cleanup_map(&game);
+	if(!is_parseable_map_file(&game, fd))
 		return (4);
-	}
-	
-	/* Validate parsed map */
-	if (!validate_map(&game))
-	{
-		cleanup_map(&game);
-		return (5);
-	}
-	
-	/* Convert new parsing data to rendering format */
-	convert_parsing_to_rendering(&game);
-	
-	/* Initialize and start game engine (this will handle MLX properly) */
+	close(fd);
 	if (init_game_engine(&game) != 0)
 	{
 		printf("Error\nGame engine initialization failed\n");
-		cleanup_map(&game);
-		return (6);
+		free_string_array(game.map.grid);
+		return (5);
 	}
-	
 	return (0);
 }
