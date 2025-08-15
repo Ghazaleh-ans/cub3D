@@ -24,7 +24,7 @@ MAIN_FILES		= main.c \
 				  validations.c \
 				  destroy_mlx_memory.c \
 				  migration.c \
-				  conversion.c
+				  conversion.c \
 
 PARSING_FILES	= parsing/parse_main.c \
 				  parsing/parse_utils.c \

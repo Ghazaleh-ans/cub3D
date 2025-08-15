@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:49:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/15 16:53:07 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/15 17:22:29 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,6 @@ void	handle_game_error(t_game *game, char *error_message)
 	exit(EXIT_FAILURE);
 }
 
-/**
- * @brief Convert colors from new parsing format to rendering format
- */
-static void	convert_colors_to_rendering(t_game *game)
-{
-    (void)game; // Placeholder for future color conversion logic
-	/* Note: This creates a mapping between t_color and int[3] arrays */
-	/* The rendering system expects separate RGB arrays, but we'll adapt */
-	/* For now, we'll use the color values directly in rendering functions */
-}
 
 void	init_game_settings(t_game *game)
 {
@@ -90,8 +80,6 @@ void	init_game_settings(t_game *game)
 		game->player.plane_y = -0.66;
 		game->player.initial_dir = 'E';
 	}
-	
-	convert_colors_to_rendering(game);
 }
 
 static void	load_texture_image(t_game *game, t_image *texture)

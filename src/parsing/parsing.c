@@ -6,11 +6,34 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 23:59:49 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/08/15 16:51:51 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/15 17:17:55 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "../../includes/cub3d.h"
+
+/**
+ * @brief Remove newline and whitespace from end of string
+ */
+static char	*trim_newline(char *str)
+{
+	int len;
+	
+	if (!str)
+		return (NULL);
+	
+	len = ft_strlen(str);
+	
+	/* Remove trailing newline and whitespace */
+	while (len > 0 && (str[len - 1] == '\n' || str[len - 1] == '\r' || 
+			str[len - 1] == ' ' || str[len - 1] == '\t'))
+	{
+		str[len - 1] = '\0';
+		len--;
+	}
+	
+	return (str);
+}
 
 /*
  * Parse the width of the map
@@ -58,7 +81,7 @@ t_color	parse_color(char *line)
 
 /*
  * Parse a texture line and store the texture path in the game map structure
- * Updated to use textures_paths[] array instead of textures[] struct
+ * FIXED: Now properly removes newlines from texture paths
  * @param line The line containing the texture information
  * @param map Pointer to the game structure to store the texture
  * @return EXIT_SUCCESS if successful, EXIT_FAILURE if an error occurs
@@ -66,14 +89,32 @@ t_color	parse_color(char *line)
 
 int	parse_texture(char *line, t_game *map)
 {
+	char	*path;
+	
 	if (ft_strncmp(line, "NO ", 3) == 0)
-		map->textures_paths[NORTH_TEX] = ft_strdup(line + space_count(line));
+	{
+		path = ft_strdup(line + 3);
+		path = trim_newline(path);
+		map->textures_paths[NORTH_TEX] = path;
+	}
 	else if (ft_strncmp(line, "SO ", 3) == 0)
-		map->textures_paths[SOUTH_TEX] = ft_strdup(line + space_count(line));
+	{
+		path = ft_strdup(line + 3);
+		path = trim_newline(path);
+		map->textures_paths[SOUTH_TEX] = path;
+	}
 	else if (ft_strncmp(line, "WE ", 3) == 0)
-		map->textures_paths[WEST_TEX] = ft_strdup(line + space_count(line));
+	{
+		path = ft_strdup(line + 3);
+		path = trim_newline(path);
+		map->textures_paths[WEST_TEX] = path;
+	}
 	else if (ft_strncmp(line, "EA ", 3) == 0)
-		map->textures_paths[EAST_TEX] = ft_strdup(line + space_count(line));
+	{
+		path = ft_strdup(line + 3);
+		path = trim_newline(path);
+		map->textures_paths[EAST_TEX] = path;
+	}
 	else
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
@@ -116,6 +157,7 @@ int	parse_file(t_game *map, char *filename)
 
 /*
  * Parse a line of the map and store it in the game structure
+ * FIXED: Now properly removes newlines from map lines
  * @param line The line to parse
  * @param map Pointer to the game structure to store the map
  * @param fd File descriptor of the map file
@@ -132,7 +174,13 @@ int	parse_map_line(char *line, t_game *map, int fd)
 	map_lines = malloc(sizeof(char *) * (MAX_MAP_LINES + 1)); 
 	if (!map_lines)
 		return (EXIT_FAILURE);
-	map_lines[map_line_count++] = ft_strdup(line);
+	
+	/* Store first line, trimming newline */
+	map_lines[map_line_count] = ft_strdup(line);
+	map_lines[map_line_count] = trim_newline(map_lines[map_line_count]);
+	map_line_count++;
+	
+	/* Read remaining map lines */
 	while ((line = get_next_line(fd)) 
 		&& (line[0] == '1' || line[0] == '0' || line[0] == ' '))
 	{
@@ -141,7 +189,9 @@ int	parse_map_line(char *line, t_game *map, int fd)
 			free(line);
 			break ;
 		}
-		map_lines[map_line_count++] = ft_strdup(line);
+		map_lines[map_line_count] = ft_strdup(line);
+		map_lines[map_line_count] = trim_newline(map_lines[map_line_count]);
+		map_line_count++;
 		free(line);
 	}
 	map_lines[map_line_count] = NULL;

@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/15 16:44:15 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/15 17:13:59 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include <limits.h>
 # include <stdbool.h>
 # include <stdint.h>
+# include <string.h>
 # include <errno.h>
 # include <sys/types.h>
 # include <sys/stat.h>
