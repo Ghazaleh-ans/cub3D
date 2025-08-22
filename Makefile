@@ -6,9 +6,12 @@ CC				= cc
 CFLAGS			= -Wall -Wextra -Werror -O3
 
 # Directories
-SRC_DIR			= src
-OBJ_DIR			= obj
-INCLUDES_DIR	= includes
+SRC_MANDATORY	= src_mandatory
+SRC_BONUS		= src_bonus
+OBJ_MANDATORY	= obj_mandatory
+OBJ_BONUS		= obj_bonus
+INCLUDES_MANDATORY = includes_mandatory
+INCLUDES_BONUS	= includes_bonus
 LIBFT_DIR		= Libft
 
 # Platform detection
@@ -17,51 +20,72 @@ MAKE			= make -C
 MKDIR			= mkdir -p
 RM				= rm -rf
 
-# Source files (updated to match your original structure)
-MAIN_FILES		= main.c \
+# Source files for mandatory version
+MANDATORY_MAIN_FILES = main.c \
+					  memory_management.c \
+					  initialize_game_struct.c \
+					  validations.c \
+					  destroy_mlx_memory.c \
+					  free_memory.c
+
+MANDATORY_PARSING_FILES = parsing/parse_main.c \
+						 parsing/parse_utils.c \
+						 parsing/parse_rgb_texture.c \
+						 parsing/parse_rgb_helper.c \
+						 parsing/extract_map_statistics.c \
+						 parsing/map_statistics.c \
+						 parsing/wall_validation.c
+
+MANDATORY_GAME_FILES = game/game_init.c \
+					  game/input_handling.c \
+					  game/handle_keyboard_input.c \
+					  game/player_movement.c
+
+MANDATORY_RAYCAST_FILES = raycasting/raycasting.c \
+						 raycasting/raycasting_utils.c \
+						 raycasting/rendering.c \
+						 raycasting/drawing.c \
+						 raycasting/drawing_utils.c
+
+# Source files for bonus version
+BONUS_MAIN_FILES = main.c \
 				  memory_management.c \
 				  initialize_game_struct.c \
 				  validations.c \
 				  destroy_mlx_memory.c \
-				  free_memory.c \
+				  free_memory.c
 
-PARSING_FILES	= parsing/parse_main.c \
-				  parsing/parse_utils.c \
-				  parsing/parse_rgb_texture.c \
-				  parsing/map_statistics.c \
-				  parsing/wall_validation.c
+BONUS_PARSING_FILES = parsing/parse_main.c \
+					 parsing/parse_utils.c \
+					 parsing/parse_rgb_texture.c \
+					 parsing/parse_rgb_helper.c \
+					 parsing/extract_map_statistics.c \
+					 parsing/map_statistics.c \
+					 parsing/wall_validation.c
 
-GAME_FILES		= game/game_init.c \
+BONUS_GAME_FILES = game/game_init.c \
 				  game/input_handling.c \
+				  game/handle_keyboard_input.c \
 				  game/player_movement.c \
 				  game/game_init_bonus.c
 
-RAYCAST_FILES	= raycasting/raycasting.c \
-				  raycasting/raycasting_utils.c \
-				  raycasting/rendering.c \
-				  raycasting/drawing.c \
-				  raycasting/drawing_utils.c \
-
-# Bonus files (minimap is bonus feature)
-BONUS_FILES		= raycasting/minimap.c
+BONUS_RAYCAST_FILES = raycasting/raycasting.c \
+					 raycasting/raycasting_utils.c \
+					 raycasting/rendering.c \
+					 raycasting/drawing.c \
+					 raycasting/drawing_utils.c \
+					 raycasting/minimap.c
 
 # All source files
-SRCS			= $(addprefix $(SRC_DIR)/, $(MAIN_FILES) $(PARSING_FILES) $(GAME_FILES) $(RAYCAST_FILES))
-
-# Add bonus files when bonus flag is set
-ifdef BONUS
-	SRCS		+= $(addprefix $(SRC_DIR)/, $(BONUS_FILES))
-	CFLAGS		+= -DBONUS
-endif
+MANDATORY_SRCS = $(addprefix $(SRC_MANDATORY)/, $(MANDATORY_MAIN_FILES) $(MANDATORY_PARSING_FILES) $(MANDATORY_GAME_FILES) $(MANDATORY_RAYCAST_FILES))
+BONUS_SRCS = $(addprefix $(SRC_BONUS)/, $(BONUS_MAIN_FILES) $(BONUS_PARSING_FILES) $(BONUS_GAME_FILES) $(BONUS_RAYCAST_FILES))
 
 # Object files
-OBJS			= $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+MANDATORY_OBJS = $(MANDATORY_SRCS:$(SRC_MANDATORY)/%.c=$(OBJ_MANDATORY)/%.o)
+BONUS_OBJS = $(BONUS_SRCS:$(SRC_BONUS)/%.c=$(OBJ_BONUS)/%.o)
 
 # Library files
 LIBFT			= $(LIBFT_DIR)/libft.a
-
-# Include flags
-INCLUDES		= -I$(INCLUDES_DIR) -I$(LIBFT_DIR)
 
 # Math library
 MATH_LIB		= -lm
@@ -73,32 +97,36 @@ ifeq ($(OS), Linux)
 	ifneq ($(shell find /usr/lib* /usr/local/lib* -name "libmlx*" 2>/dev/null | head -1), )
 		# System MLX found
 		MLX_LIB		= # No local MLX library needed
-		INCLUDES	+= -I/usr/include -I/usr/local/include
+		INCLUDES_MLX = -I/usr/include -I/usr/local/include
 		MLX_FLAGS	= -lmlx -lXext -lX11 
 	else ifneq ($(shell ldconfig -p 2>/dev/null | grep libmlx), )
 		# System MLX found via ldconfig
 		MLX_LIB		= # No local MLX library needed
-		INCLUDES	+= -I/usr/include -I/usr/local/include
+		INCLUDES_MLX = -I/usr/include -I/usr/local/include
 		MLX_FLAGS	= -lmlx -lXext -lX11 
 	else ifeq ($(shell test -d mlx_linux && echo "yes"), yes)
 		# No system MLX, but mlx_linux folder exists
 		MLX_DIR		= mlx_linux
 		MLX_LIB		= $(MLX_DIR)/libmlx.a
-		INCLUDES	+= -I$(MLX_DIR)
+		INCLUDES_MLX = -I$(MLX_DIR)
 		MLX_FLAGS	= -L$(MLX_DIR) -lmlx -lXext -lX11 
 	else
 		# No MLX found anywhere - will try system MLX and let linker handle it
 		MLX_LIB		= # No local MLX library needed
-		INCLUDES	+= -I/usr/include -I/usr/local/include
+		INCLUDES_MLX = -I/usr/include -I/usr/local/include
 		MLX_FLAGS	= -lmlx -lXext -lX11 
 	endif
 else ifeq ($(OS), Darwin)
 	# macOS - use local mlx_macos
 	MLX_DIR			= mlx_macos
 	MLX_LIB			= $(MLX_DIR)/libmlx.a
-	INCLUDES		+= -I$(MLX_DIR)
+	INCLUDES_MLX	= -I$(MLX_DIR)
 	MLX_FLAGS		= -L$(MLX_DIR) -lmlx -framework OpenGL -framework AppKit
 endif
+
+# Include flags
+MANDATORY_INCLUDES = -I$(INCLUDES_MANDATORY) -I$(LIBFT_DIR) $(INCLUDES_MLX)
+BONUS_INCLUDES = -I$(INCLUDES_BONUS) -I$(LIBFT_DIR) $(INCLUDES_MLX)
 
 # Colors for pretty output
 RED				= \033[0;31m
@@ -117,22 +145,29 @@ CLEAN			= 🧹
 
 # ================================== RULES =================================== #
 
-# Default target
-all: check_build_type $(LIBFT) $(MLX_LIB) $(OBJ_DIR) $(NAME)
+# Default target (mandatory version)
+all: $(LIBFT) $(MLX_LIB) $(OBJ_MANDATORY) mandatory
 
-# Check if we need to rebuild due to build type change
-check_build_type:
-	@if [ -f .bonus_flag ] && [ ! "$(BONUS)" = "1" ]; then \
-		echo "$(YELLOW)⚠️  Previous build was bonus, cleaning for regular build...$(RESET)"; \
-		$(RM) $(OBJ_DIR) $(NAME) .bonus_flag; \
-	elif [ ! -f .bonus_flag ] && [ "$(BONUS)" = "1" ]; then \
-		echo "$(YELLOW)⚠️  Previous build was regular, cleaning for bonus build...$(RESET)"; \
-		$(RM) $(OBJ_DIR) $(NAME); \
-	fi
+# Mandatory version
+mandatory: $(MANDATORY_OBJS) Makefile
+	@echo "$(BUILD) $(GREEN)Compiling mandatory $(NAME)...$(RESET)"
+	@$(CC) $(CFLAGS) $(MANDATORY_OBJS) -L$(LIBFT_DIR) -lft $(MLX_FLAGS) $(MATH_LIB) -o $(NAME)
+	@echo "$(SUCCESS) $(YELLOW)Mandatory $(NAME) FINISHED$(RESET)"
 
-# Create object directory
-$(OBJ_DIR):
-	@$(MKDIR) $(OBJ_DIR)
+# Bonus version
+bonus: $(LIBFT) $(MLX_LIB) $(OBJ_BONUS) bonus_build
+
+bonus_build: $(BONUS_OBJS) Makefile
+	@echo "$(BUILD) $(MAGENTA)Compiling bonus $(NAME)...$(RESET)"
+	@$(CC) $(CFLAGS) $(BONUS_OBJS) -L$(LIBFT_DIR) -lft $(MLX_FLAGS) $(MATH_LIB) -o $(NAME)
+	@echo "$(MAGENTA)$(SUCCESS) Bonus $(NAME) FINISHED with all features enabled!$(RESET)"
+
+# Create object directories
+$(OBJ_MANDATORY):
+	@$(MKDIR) $(OBJ_MANDATORY)
+
+$(OBJ_BONUS):
+	@$(MKDIR) $(OBJ_BONUS)
 
 # Build libft
 $(LIBFT):
@@ -148,25 +183,21 @@ $(MLX_LIB):
 	@echo "$(SUCCESS) $(YELLOW)Made MinilibX!$(RESET)"
 endif
 
-# Create the main executable
-$(NAME): $(OBJS) Makefile
-	@echo "$(BUILD) $(GREEN)Compiling $(NAME)...$(RESET)"
-	@$(CC) $(CFLAGS) $(OBJS) -L$(LIBFT_DIR) -lft $(MLX_FLAGS) $(MATH_LIB) -o $(NAME)
-ifdef BONUS
-	@touch .bonus_flag
-endif
-	@echo "$(SUCCESS) $(YELLOW)Compiling $(NAME) FINISHED$(RESET)"
-
-# Compile object files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+# Compile mandatory object files
+$(OBJ_MANDATORY)/%.o: $(SRC_MANDATORY)/%.c
 	@$(MKDIR) $(dir $@)
-	@echo "$(YELLOW)Compiling $<...$(RESET)"
-	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@echo "$(YELLOW)Compiling mandatory $<...$(RESET)"
+	@$(CC) $(CFLAGS) $(MANDATORY_INCLUDES) -c $< -o $@
+
+# Compile bonus object files
+$(OBJ_BONUS)/%.o: $(SRC_BONUS)/%.c
+	@$(MKDIR) $(dir $@)
+	@echo "$(YELLOW)Compiling bonus $<...$(RESET)"
+	@$(CC) $(CFLAGS) $(BONUS_INCLUDES) -c $< -o $@
 
 # Clean object files
 clean:
-	@$(RM) $(OBJ_DIR)
-	@$(RM) .bonus_flag
+	@$(RM) $(OBJ_MANDATORY) $(OBJ_BONUS)
 	@$(MAKE) $(LIBFT_DIR) clean --no-print-directory
 ifdef MLX_DIR
 	@if [ -d "$(MLX_DIR)" ]; then $(MAKE) $(MLX_DIR) clean --no-print-directory; fi
@@ -185,32 +216,29 @@ endif
 # Rebuild everything
 re: fclean all
 
-# Bonus target (with additional features) - smart rebuild
-bonus: 
-	@if [ -f .bonus_flag ] && [ -f $(NAME) ] && [ "$(shell find $(SRC_DIR) -name '*.c' -newer .bonus_flag 2>/dev/null)" = "" ]; then \
-		echo "$(MAGENTA)$(SUCCESS) Bonus version already up to date!$(RESET)"; \
-	else \
-		echo "$(BUILD) $(MAGENTA)Building bonus version...$(RESET)"; \
-		$(MAKE) . BONUS=1 --no-print-directory; \
-		echo "$(MAGENTA)$(SUCCESS) Bonus features enabled!$(RESET)"; \
-	fi
+# Re-bonus
+re_bonus: fclean bonus
 
 # Help target
 help:
 	@echo "$(CYAN)Available targets:$(RESET)"
-	@echo "  $(GREEN)all$(RESET)     - Build the project"
-	@echo "  $(GREEN)clean$(RESET)   - Remove object files"
-	@echo "  $(GREEN)fclean$(RESET)  - Remove object files and executable"
-	@echo "  $(GREEN)re$(RESET)      - Rebuild the project"
-	@echo "  $(GREEN)bonus$(RESET)   - Build with bonus features"
-	@echo "  $(GREEN)help$(RESET)    - Show this help message"
-	@echo "  $(GREEN)info$(RESET)    - Show project information"
+	@echo "  $(GREEN)all$(RESET)      - Build the mandatory version (default)"
+	@echo "  $(GREEN)mandatory$(RESET) - Build the mandatory version explicitly"
+	@echo "  $(GREEN)bonus$(RESET)    - Build the bonus version with all features"
+	@echo "  $(GREEN)clean$(RESET)    - Remove object files"
+	@echo "  $(GREEN)fclean$(RESET)   - Remove object files and executable"
+	@echo "  $(GREEN)re$(RESET)       - Rebuild the mandatory version"
+	@echo "  $(GREEN)re_bonus$(RESET) - Rebuild the bonus version"
+	@echo "  $(GREEN)help$(RESET)     - Show this help message"
+	@echo "  $(GREEN)info$(RESET)     - Show project information"
 
 # Check for coding style (if norminette is available)
 norm:
 	@if command -v norminette >/dev/null 2>&1; then \
-		echo "$(BLUE)Checking coding style...$(RESET)"; \
-		norminette $(SRC_DIR) $(INCLUDES_DIR); \
+		echo "$(BLUE)Checking coding style for mandatory...$(RESET)"; \
+		norminette $(SRC_MANDATORY) $(INCLUDES_MANDATORY); \
+		echo "$(BLUE)Checking coding style for bonus...$(RESET)"; \
+		norminette $(SRC_BONUS) $(INCLUDES_BONUS); \
 	else \
 		echo "$(YELLOW)⚠️  norminette not found, skipping style check$(RESET)"; \
 	fi
@@ -218,10 +246,10 @@ norm:
 # Test the program with a sample map
 test: $(NAME)
 	@echo "$(CYAN)Testing with sample map...$(RESET)"
-	@if [ -f maps/sample.cub ]; then \
-		./$(NAME) maps/sample.cub; \
+	@if [ -f maps/simple.cub ]; then \
+		./$(NAME) maps/simple.cub; \
 	else \
-		echo "$(RED)❌ No test map found at maps/sample.cub$(RESET)"; \
+		echo "$(RED)❌ No test map found at maps/simple.cub$(RESET)"; \
 	fi
 
 # Install dependencies
@@ -251,8 +279,8 @@ info:
 	@echo "  Compiler: $(GREEN)$(CC)$(RESET)"
 	@echo "  Flags: $(GREEN)$(CFLAGS)$(RESET)"
 	@echo "  Platform: $(GREEN)$(OS)$(RESET)"
-	@echo "  Source files: $(GREEN)$(words $(SRCS))$(RESET)"
-	@echo "  Object files: $(GREEN)$(words $(OBJS))$(RESET)"
+	@echo "  Mandatory source files: $(GREEN)$(words $(MANDATORY_SRCS))$(RESET)"
+	@echo "  Bonus source files: $(GREEN)$(words $(BONUS_SRCS))$(RESET)"
 ifdef MLX_DIR
 	@echo "  MLX: $(GREEN)Local ($(MLX_DIR))$(RESET)"
 else
@@ -261,4 +289,4 @@ endif
 	@echo "  MLX Flags: $(GREEN)$(MLX_FLAGS)$(RESET)"
 
 # Declare phony targets
-.PHONY: all clean fclean re bonus help norm test install-deps info check_build_type
+.PHONY: all mandatory bonus bonus_build clean fclean re re_bonus help norm test install-deps info
