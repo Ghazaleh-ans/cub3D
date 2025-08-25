@@ -75,6 +75,7 @@ BONUS_RAYCAST_FILES = raycasting/raycasting.c \
 					 raycasting/drawing.c \
 					 raycasting/drawing_utils.c \
 					 raycasting/minimap.c \
+					 raycasting/minimap_utils.c \
 					 raycasting/rays_on_minimap.c
 
 # All source files
