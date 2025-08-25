@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:53:00 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/22 15:36:07 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/25 11:57:33 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,9 @@ static int	get_cell_color(t_game *game, char cell_char)
 {
 	if (cell_char == '1')
 		return (COLOR_BLACK);
-	else if (cell_char == '0')
+	else if (cell_char == '0' || is_character_valid(cell_char, "NSEW"))
 		return (create_trgb_color(0, game->map.ceiling_rgb[0],
 				game->map.ceiling_rgb[1], game->map.ceiling_rgb[2]));
-	else if (is_character_valid(cell_char, "NSEW"))
-		return (COLOR_PLAYER);
 	else
 		return (COLOR_WALL);
 }

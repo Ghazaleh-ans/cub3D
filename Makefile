@@ -74,7 +74,9 @@ BONUS_RAYCAST_FILES = raycasting/raycasting.c \
 					 raycasting/rendering.c \
 					 raycasting/drawing.c \
 					 raycasting/drawing_utils.c \
-					 raycasting/minimap.c
+					 raycasting/minimap.c \
+					 raycasting/minimap_utils.c \
+					 raycasting/rays_on_minimap.c
 
 # All source files
 MANDATORY_SRCS = $(addprefix $(SRC_MANDATORY)/, $(MANDATORY_MAIN_FILES) $(MANDATORY_PARSING_FILES) $(MANDATORY_GAME_FILES) $(MANDATORY_RAYCAST_FILES))
