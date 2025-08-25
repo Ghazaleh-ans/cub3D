@@ -17,6 +17,10 @@ int	render_frame(t_game *game)
 	process_movement_input(game);
 	render_background_colors(game);
 	execute_raycasting(game);
+	draw_minimap_display(game);
+	draw_all_rays_on_minimap(game);
+	draw_minimap_case(game, (int)game->player.pos_x * MINIMAP_SCALE,
+		(int)game->player.pos_y * MINIMAP_SCALE, COLOR_PLAYER);
 	mlx_put_image_to_window(game->mlx.instance, game->mlx.window,
 		game->textures.screen.mlx_ptr, 0, 0);
 	mlx_put_image_to_window(game->mlx.instance, game->mlx.window,
