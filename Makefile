@@ -34,7 +34,8 @@ MANDATORY_PARSING_FILES = parsing/parse_main.c \
 						 parsing/parse_rgb_helper.c \
 						 parsing/extract_map_statistics.c \
 						 parsing/map_statistics.c \
-						 parsing/wall_validation.c
+						 parsing/wall_validation.c \
+						 parsing/flood_fill.c
 
 MANDATORY_GAME_FILES = game/game_init.c \
 					  game/input_handling.c \
@@ -61,7 +62,8 @@ BONUS_PARSING_FILES = parsing/parse_main.c \
 					 parsing/parse_rgb_helper.c \
 					 parsing/extract_map_statistics.c \
 					 parsing/map_statistics.c \
-					 parsing/wall_validation.c
+					 parsing/wall_validation.c \
+					 parsing/flood_fill.c
 
 BONUS_GAME_FILES = game/game_init.c \
 				  game/input_handling.c \
