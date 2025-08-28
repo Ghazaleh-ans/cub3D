@@ -12,13 +12,18 @@
 
 #include "../../includes_bonus/cub3d.h"
 
+static void	clear_dynamic_minimap_elements(t_game *game)
+{
+	restore_minimap_from_base(game);
+}
+
 int	render_frame(t_game *game)
 {
 	process_movement_input(game);
 	render_background_colors(game);
 	execute_raycasting(game);
-	draw_minimap_display(game);
-	draw_all_rays_on_minimap(game);
+	clear_dynamic_minimap_elements(game);
+	draw_player_direction_line(game);
 	draw_minimap_case(game, (int)game->player.pos_x * MINIMAP_SCALE,
 		(int)game->player.pos_y * MINIMAP_SCALE, COLOR_PLAYER);
 	mlx_put_image_to_window(game->mlx.instance, game->mlx.window,
