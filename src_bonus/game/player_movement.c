@@ -22,11 +22,16 @@ void	move_player_with_collision(t_game *game, double delta_x, double delta_y)
 	previous_grid_x = (int)game->player.pos_x;
 	previous_grid_y = (int)game->player.pos_y;
 	new_x = game->player.pos_x + delta_x;
+	new_y = game->player.pos_y + delta_y;
 	if (game->map.grid[(int)game->player.pos_y][(int)new_x] != '1')
 		game->player.pos_x = new_x;
-	new_y = game->player.pos_y + delta_y;
 	if (game->map.grid[(int)new_y][(int)game->player.pos_x] != '1')
 		game->player.pos_y = new_y;
+	if (game->map.grid[(int)game->player.pos_y][(int)game->player.pos_x] == '1')
+	{
+		game->player.pos_x = game->player.pos_x - delta_x;
+		game->player.pos_y = game->player.pos_y - delta_y;
+	}
 	if ((int)game->player.pos_x != previous_grid_x
 		|| (int)game->player.pos_y != previous_grid_y)
 	{
