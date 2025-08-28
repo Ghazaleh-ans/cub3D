@@ -19,8 +19,8 @@
 void	set_player_position(t_game *game, char direction,
 		int row, int col)
 {
-	game->player.pos_y = (double)row;
-	game->player.pos_x = (double)col;
+	game->player.pos_y = (double)row + 0.5;
+	game->player.pos_x = (double)col + 0.5;
 	game->player.initial_dir = direction;
 	if (direction == 'N')
 	{
