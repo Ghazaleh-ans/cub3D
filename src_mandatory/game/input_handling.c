@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:50:44 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/22 16:47:14 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/26 16:54:59 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,17 @@ void	process_movement_input(t_game *game)
 	if (move_x != 0.0 || move_y != 0.0)
 		move_player_with_collision(game, move_x, move_y);
 	if (game->player.key_left)
-		rotate_player_view(game, -game->player.rotate_speed);
+	{
+		if (game->player.initial_dir == 'N' || game->player.initial_dir == 'S')
+			rotate_player_view(game, -game->player.rotate_speed);
+		else
+			rotate_player_view(game, game->player.rotate_speed);
+	}
 	if (game->player.key_right)
-		rotate_player_view(game, game->player.rotate_speed);
+	{
+		if (game->player.initial_dir == 'N' || game->player.initial_dir == 'S')
+			rotate_player_view(game, game->player.rotate_speed);
+		else
+			rotate_player_view(game, -game->player.rotate_speed);
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 14:02:29 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/08/21 14:02:43 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/08/26 17:01:42 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,8 @@ bool	validate_cols(t_game *game)
 
 bool	validate_map_walls(t_game *game)
 {
-	if (!validate_rows(game) || !validate_cols(game))
+	if ((!validate_rows(game) || !validate_cols(game))
+		&& !validate_open_walls(game))
 	{
 		free_texture_paths(game);
 		return (false);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validations.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:28:22 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/22 12:52:13 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/26 16:42:10 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ int	is_parseable_map_file(t_game *game, int fd)
 		return (0);
 	if (!parse_map_file(game, fd))
 	{
-		printf("Error\nMap parsing failed\n");
 		free_string_array(game->map.grid);
 		close(fd);
 		return (0);
