@@ -127,7 +127,6 @@ typedef struct s_textures
 	t_image		west;
 	t_image		screen;
 	t_image		minimap;
-	t_image		minimap_base;
 }	t_textures;
 
 /**

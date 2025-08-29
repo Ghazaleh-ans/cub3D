@@ -12,26 +12,6 @@
 
 #include "../../includes_bonus/cub3d.h"
 
-static void	copy_minimap_base(t_game *game)
-{
-	int	total_bytes;
-
-	total_bytes = game->map.height * MINIMAP_SCALE 
-		* game->textures.minimap_base.line_length;
-	ft_memcpy(game->textures.minimap_base.data,
-		game->textures.minimap.data, total_bytes);
-}
-
-void	restore_minimap_from_base(t_game *game)
-{
-	int	total_bytes;
-
-	total_bytes = game->map.height * MINIMAP_SCALE 
-		* game->textures.minimap_base.line_length;
-	ft_memcpy(game->textures.minimap.data,
-		game->textures.minimap_base.data, total_bytes);
-}
-
 void	init_minimap_system(t_game *game)
 {
 	int	minimap_width;
@@ -50,17 +30,5 @@ void	init_minimap_system(t_game *game)
 			&game->textures.minimap.endian);
 	if (!game->textures.minimap.data)
 		handle_game_error(game, "Error\nFailed to initialize minimap data\n");
-	game->textures.minimap_base.mlx_ptr = mlx_new_image(game->mlx.instance,
-			minimap_width, minimap_height);
-	if (!game->textures.minimap_base.mlx_ptr)
-		handle_game_error(game, "Error\nFailed to create minimap base\n");
-	game->textures.minimap_base.data
-		= mlx_get_data_addr(game->textures.minimap_base.mlx_ptr,
-			&game->textures.minimap_base.bits_per_pixel,
-			&game->textures.minimap_base.line_length,
-			&game->textures.minimap_base.endian);
-	if (!game->textures.minimap_base.data)
-		handle_game_error(game, "Error\nFailed to initialize minimap base\n");
 	draw_minimap_display(game);
-	copy_minimap_base(game);
 }
