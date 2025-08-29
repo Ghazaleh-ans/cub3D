@@ -6,34 +6,61 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 14:51:12 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/22 15:25:33 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/29 17:19:15 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes_mandatory/cub3d.h"
 
+static int	is_wall_at_position(t_game *game, int x, int y)
+{
+	if (x < 0 || y < 0 || x >= game->map.width || y >= game->map.height)
+		return (1);
+	return (game->map.grid[y][x] == '1');
+}
+
 void	move_player_with_collision(t_game *game, double delta_x, double delta_y)
 {
-	int		previous_grid_x;
-	int		previous_grid_y;
 	double	new_x;
 	double	new_y;
+	int		x_blocked;
+	int		y_blocked;
+	int		diagonal_blocked;
 
-	previous_grid_x = (int)game->player.pos_x;
-	previous_grid_y = (int)game->player.pos_y;
 	new_x = game->player.pos_x + delta_x;
 	new_y = game->player.pos_y + delta_y;
-	if (game->map.grid[(int)game->player.pos_y][(int)new_x] != '1')
-		game->player.pos_x = new_x;
-	if (game->map.grid[(int)new_y][(int)game->player.pos_x] != '1')
-		game->player.pos_y = new_y;
-	if (game->map.grid[(int)game->player.pos_y][(int)game->player.pos_x] == '1')
+	x_blocked = is_wall_at_position(game, (int)new_x, (int)game->player.pos_y);
+	y_blocked = is_wall_at_position(game, (int)game->player.pos_x, (int)new_y);
+	diagonal_blocked = is_wall_at_position(game, (int)new_x, (int)new_y);
+	if (delta_x != 0.0 && delta_y != 0.0)
 	{
-		game->player.pos_x = game->player.pos_x - delta_x;
-		game->player.pos_y = game->player.pos_y - delta_y;
+		if (diagonal_blocked)
+		{
+			if (!x_blocked && y_blocked)
+				game->player.pos_x = new_x;
+			else if (x_blocked && !y_blocked)
+				game->player.pos_y = new_y;
+		}
+		else
+		{
+			if (!x_blocked)
+				game->player.pos_x = new_x;
+			if (!y_blocked)
+				game->player.pos_y = new_y;
+		}
 	}
-	(void)previous_grid_x;
-	(void)previous_grid_y;
+	else
+	{
+		if (!x_blocked && delta_x != 0.0)
+			game->player.pos_x = new_x;
+		if (!y_blocked && delta_y != 0.0)
+			game->player.pos_y = new_y;
+	}
+	if (is_wall_at_position(game, (int)game->player.pos_x, (int)game->player.pos_y))
+	{
+		game->player.pos_x -= delta_x;
+		game->player.pos_y -= delta_y;
+	}
 }
 
 void	rotate_player_view(t_game *game, double rotation_speed)
