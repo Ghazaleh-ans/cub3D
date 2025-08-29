@@ -250,13 +250,13 @@ void	render_background_colors(t_game *game);
 /* ========================================================================== */
 
 void	init_minimap_system(t_game *game);
-void	restore_minimap_from_base(t_game *game);
 void	draw_minimap_display(t_game *game);
 void	update_minimap_player_position(t_game *game, int previous_x,
 			int previous_y);
 void	put_pixel_to_minimap(t_game *game, int x, int y, int color);
 void	draw_minimap_case(t_game *game, int x, int y, int color);
-void	draw_player_direction_line(t_game *game);
+void	draw_all_rays_on_minimap(t_game *game);
 void	draw_ray_on_minimap(t_game *game, double ray_dir_x, double ray_dir_y);
+void	draw_player_direction_line(t_game *game);
 
 #endif

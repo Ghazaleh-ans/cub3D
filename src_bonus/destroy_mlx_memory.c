@@ -39,8 +39,6 @@ static void	destroy_screen_textures(t_game *game)
 		(void **)&game->textures.screen.mlx_ptr);
 	destroy_single_texture(game->mlx.instance,
 		(void **)&game->textures.minimap.mlx_ptr);
-	destroy_single_texture(game->mlx.instance,
-		(void **)&game->textures.minimap_base.mlx_ptr);
 }
 
 void	destroy_mlx_images(t_game *game)
