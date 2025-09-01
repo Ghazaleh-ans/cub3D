@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/09/01 12:54:35 by gansari          ###   ########.fr       */
+/*   Updated: 2025/09/01 17:44:41 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,8 @@ int		get_texture_color(t_game *game, int tex_x, int tex_y,
 void	put_pixel_to_image(t_game *game, int x, int y, int color);
 void	draw_wall_column(t_game *game, int screen_x);
 int		render_frame(t_game *game);
+void	calculate_texture_coordinates(t_game *game, int line_start,
+			int line_height);
 
 /* ========================================================================== */
 /*                           BACKGROUND RENDERING                            */
