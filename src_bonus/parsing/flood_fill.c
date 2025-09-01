@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 16:46:40 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/08/28 12:00:11 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/08/28 15:29:17 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ bool	validate_open_walls(t_game *game)
 			(int)game->player.pos_x, &game->map);
 	free_double_ptr(temp_map);
 	if (!result)
-		return (print_error(ERR_MAP_NOT_CLOSED), false);
+		return (handle_parsing_error(game, ERR_MAP_NOT_CLOSED), false);
 	return (true);
 }
 
