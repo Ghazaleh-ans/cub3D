@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 16:37:09 by gansari           #+#    #+#             */
-/*   Updated: 2025/09/01 14:52:47 by gansari          ###   ########.fr       */
+/*   Updated: 2025/09/01 15:49:44 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static void	calculate_texture_coordinates(t_game *game, int line_start,
 	}
 	game->wall.hit_x -= floor(game->wall.hit_x);
 	game->wall.tex_x = (int)(game->wall.hit_x * TEXTURE_SIZE);
-	if (game->ray.side == 0 && game->ray.dir_x > 0)
+	if (game->ray.side == 0 && game->ray.dir_x < 0)
 		game->wall.tex_x = TEXTURE_SIZE - game->wall.tex_x - 1;
 	if (game->ray.side == 1 && game->ray.dir_y < 0)
 		game->wall.tex_x = TEXTURE_SIZE - game->wall.tex_x - 1;
