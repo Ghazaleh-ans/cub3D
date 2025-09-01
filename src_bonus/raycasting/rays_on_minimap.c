@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:19:32 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/25 11:55:28 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/30 00:14:12 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,3 @@ void	draw_ray_on_minimap(t_game *game, double ray_dir_x, double ray_dir_y)
 		i++;
 	}
 }
-

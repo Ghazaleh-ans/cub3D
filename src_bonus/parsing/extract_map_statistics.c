@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   extract_map_statistics.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 13:11:06 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/08/22 13:44:54 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/28 15:31:01 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

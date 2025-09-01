@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/28 11:59:40 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/08/30 19:20:49 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@
 # define ERR_INVALID "Invalid map"
 # define ERR_NO_PLAYER "No player found in map"
 # define ERR_MULTI_PLAYER "Multiple players found"
-# define ERR_MAP_NOT_CLOSED "Map is not surrounded by walls"
+# define ERR_MAP_NOT_CLOSED "Error\nMap is not surrounded by walls\n"
 # define ERR_INVALID_CHAR "Invalid character in map"
 # define ERR_MISSING_TEXTURE "Missing texture path"
 # define ERR_INVALID_COLOR "Invalid color format"
@@ -140,6 +140,7 @@ int		clean_exit_program(t_game *game);
 void	handle_parsing_error(t_game *game, char *error_message);
 int		read_and_parse_map_file(int file_descriptor, t_game *game);
 int		parse_map_file(t_game *game, int file_descriptor);
+void	normalize_map_dimensions(t_game *g);
 
 /* ========================================================================== */
 /*                            PARSING UTILITIES                              */
@@ -164,6 +165,7 @@ int		validate_vertical_walls(t_game *game, int start_row, int start_col);
 int		validate_map_line(t_game *game, char *line_to_check, int start_col);
 int		validate_horizontal_walls(t_game *game, int start_row, int start_col);
 bool	validate_map_walls(t_game *game);
+int		validate_parsed_map(t_game *game);
 
 /* ========================================================================== */
 /*                          MAP STATISTICS                                   */

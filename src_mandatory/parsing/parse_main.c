@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_main.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 19:49:35 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/08/22 17:17:46 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/30 19:23:45 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,26 @@ void	normalize_map_dimensions(t_game *g)
 	}
 }
 
+static int	process_map_line(t_game *g, char *line, int *parsing)
+{
+	g->map.current_line = line;
+	if (line[0] == '\n')
+		line[0] = ' ';
+	if (!*parsing)
+		*parsing = extract_map_statistics(g, line);
+	if (*parsing && ft_strchr(line, '/'))
+	{
+		free(line);
+		g->map.current_line = NULL;
+		return (handle_parsing_error(g, ERR_INVALID_MAP), 0);
+	}
+	if (*parsing)
+		g->map.data_buffer = join_strings(g->map.data_buffer, line);
+	free(line);
+	g->map.current_line = NULL;
+	return (1);
+}
+
 int	read_and_parse_map_file(int fd, t_game *g)
 {
 	char	*line;
@@ -65,15 +85,8 @@ int	read_and_parse_map_file(int fd, t_game *g)
 	line = get_next_line(fd);
 	while (line)
 	{
-		if (line[0] == '\n')
-			line[0] = ' ';
-		if (!parsing)
-			parsing = extract_map_statistics(g, line);
-		if (parsing && ft_strchr(line, '/'))
-			return (free(line), handle_parsing_error(g, ERR_INVALID_MAP), 0);
-		if (parsing)
-			g->map.data_buffer = join_strings(g->map.data_buffer, line);
-		free(line);
+		if (!process_map_line(g, line, &parsing))
+			return (0);
 		line = get_next_line(fd);
 	}
 	buffer = "";
@@ -81,15 +94,4 @@ int	read_and_parse_map_file(int fd, t_game *g)
 		buffer = g->map.data_buffer;
 	g->map.grid = ft_split(buffer, '/');
 	return (free(g->map.data_buffer), g->map.data_buffer = NULL, 1);
-}
-
-int	parse_map_file(t_game *game, int file_descriptor)
-{
-	if (!read_and_parse_map_file(file_descriptor, game))
-		return (0);
-	normalize_map_dimensions(game);
-	if (!validate_parsed_map(game))
-		return (0);
-	close(file_descriptor);
-	return (1);
 }

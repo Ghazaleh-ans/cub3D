@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/28 11:59:19 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/09/01 11:13:50 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@
 # define ERR_INVALID "Invalid map"
 # define ERR_NO_PLAYER "No player found in map"
 # define ERR_MULTI_PLAYER "Multiple players found"
-# define ERR_MAP_NOT_CLOSED "Map is not surrounded by walls"
+# define ERR_MAP_NOT_CLOSED "Error\nMap is not surrounded by walls\n"
 # define ERR_INVALID_CHAR "Invalid character in map"
 # define ERR_MISSING_TEXTURE "Missing texture path"
 # define ERR_INVALID_COLOR "Invalid color format"
@@ -121,6 +121,7 @@ int		free_double_ptr(char **ptr);
 char	**create_temp_map(t_map *game);
 int		flood_fill(char **map, int y, int x, t_map *game);
 void	print_error(char *message);
+int		validate_parsed_map(t_game *game);
 
 /* ========================================================================== */
 /*                            MEMORY MANAGEMENT                              */
@@ -140,6 +141,7 @@ int		clean_exit_program(t_game *game);
 void	handle_parsing_error(t_game *game, char *error_message);
 int		read_and_parse_map_file(int file_descriptor, t_game *game);
 int		parse_map_file(t_game *game, int file_descriptor);
+void	normalize_map_dimensions(t_game *g);
 
 /* ========================================================================== */
 /*                            PARSING UTILITIES                              */

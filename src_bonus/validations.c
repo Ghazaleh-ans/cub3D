@@ -6,7 +6,7 @@
 /*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:28:22 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/26 16:29:29 by mukibrok         ###   ########.fr       */
+/*   Updated: 2025/08/28 15:30:27 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	is_parseable_map_file(t_game *game, int fd)
 		return (0);
 	if (!parse_map_file(game, fd))
 	{
-		free_string_array(game->map.grid);
+		handle_parsing_error(game, "Freed all memory");
 		close(fd);
 		return (0);
 	}

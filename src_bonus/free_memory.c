@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_memory.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 17:03:01 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/22 12:51:13 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/28 13:29:46 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	free_string_array(char **string_array)
 {
 	int	string_index;
 
-	if (!string_array)
+	if (!string_array && !*string_array)
 		return ;
 	string_index = 0;
 	while (string_array[string_index])

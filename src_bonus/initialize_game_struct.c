@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initialize_game_struct.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:04:12 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/13 15:08:28 by gansari          ###   ########.fr       */
+/*   Updated: 2025/08/30 19:27:21 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
