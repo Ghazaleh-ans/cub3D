@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:25:55 by gansari           #+#    #+#             */
-/*   Updated: 2025/09/01 11:13:50 by gansari          ###   ########.fr       */
+/*   Updated: 2025/09/01 12:54:35 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,6 +214,11 @@ void	process_movement_input(t_game *game);
 void	move_player_with_collision(t_game *game, double delta_x,
 			double delta_y);
 void	rotate_player_view(t_game *game, double rotation_speed);
+void	handle_diagonal_movement(t_game *game, double new_x, double new_y);
+void	handle_single_axis_movement(t_game *game, double delta_x,
+			double delta_y);
+void	revert_invalid_position(t_game *game, double delta_x, double delta_y);
+int		is_wall_at_position(t_game *game, int x, int y);
 
 /* ========================================================================== */
 /*                            RAYCASTING ENGINE                              */
