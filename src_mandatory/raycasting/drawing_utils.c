@@ -6,7 +6,7 @@
 /*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 16:37:09 by gansari           #+#    #+#             */
-/*   Updated: 2025/08/22 15:30:12 by gansari          ###   ########.fr       */
+/*   Updated: 2025/09/01 14:52:47 by gansari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,9 @@ static int	determine_wall_texture(t_game *game)
 	if (game->ray.side == 1)
 	{
 		if (game->ray.dir_y < 0)
-			return (SOUTH);
-		else
 			return (NORTH);
+		else
+			return (SOUTH);
 	}
 	else
 	{
