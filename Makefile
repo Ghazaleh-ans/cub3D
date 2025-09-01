@@ -40,7 +40,8 @@ MANDATORY_PARSING_FILES = parsing/parse_main.c \
 MANDATORY_GAME_FILES = game/game_init.c \
 					  game/input_handling.c \
 					  game/handle_keyboard_input.c \
-					  game/player_movement.c
+					  game/player_movement.c \
+					  game/player_movement_utils.c
 
 MANDATORY_RAYCAST_FILES = raycasting/raycasting.c \
 						 raycasting/raycasting_utils.c \
@@ -69,6 +70,7 @@ BONUS_GAME_FILES = game/game_init.c \
 				  game/input_handling.c \
 				  game/handle_keyboard_input.c \
 				  game/player_movement.c \
+				  game/player_movement_utils.c \
 				  game/game_init_bonus.c
 
 BONUS_RAYCAST_FILES = raycasting/raycasting.c \
