@@ -63,8 +63,8 @@
 # define TEXTURE_SIZE	128		/* Size of wall textures (128x128) */
 
 /* Movement and rotation speeds */
-# define MOVE_SPEED		0.04	/* Player movement speed */
-# define ROTATION_SPEED	0.04	/* Player rotation speed */
+# define MOVE_SPEED		0.02	/* Player movement speed */
+# define ROTATION_SPEED	0.03	/* Player rotation speed */
 
 /* Minimap settings */
 # define MINIMAP_SCALE	7		/* Scale factor for minimap */

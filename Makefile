@@ -10,8 +10,8 @@ SRC_MANDATORY	= src_mandatory
 SRC_BONUS		= src_bonus
 OBJ_MANDATORY	= obj_mandatory
 OBJ_BONUS		= obj_bonus
-INCLUDES_MANDATORY = includes_mandatory
-INCLUDES_BONUS	= includes_bonus
+INCLUDES_MANDATORY = includes_mandatory/cub3d.h
+INCLUDES_BONUS	= includes_bonus/cub3d.h
 LIBFT_DIR		= Libft
 
 # Platform detection
@@ -157,13 +157,13 @@ CLEAN			= 🧹
 all: $(LIBFT) $(MLX_LIB) $(OBJ_MANDATORY) mandatory
 
 # Mandatory version
-mandatory: $(MANDATORY_OBJS) Makefile
+mandatory: $(MANDATORY_OBJS) $(INCLUDES_MANDATORY) Makefile
 	@echo "$(BUILD) $(GREEN)Compiling mandatory $(NAME)...$(RESET)"
 	@$(CC) $(CFLAGS) $(MANDATORY_OBJS) -L$(LIBFT_DIR) -lft $(MLX_FLAGS) $(MATH_LIB) -o $(NAME)
 	@echo "$(SUCCESS) $(YELLOW)Mandatory $(NAME) FINISHED$(RESET)"
 
 # Bonus version
-bonus: $(LIBFT) $(MLX_LIB) $(OBJ_BONUS) bonus_build
+bonus: $(LIBFT) $(MLX_LIB) $(OBJ_BONUS) $(INCLUDES_BONUS) bonus_build
 
 bonus_build: $(BONUS_OBJS) Makefile
 	@echo "$(BUILD) $(MAGENTA)Compiling bonus $(NAME)...$(RESET)"
@@ -192,13 +192,13 @@ $(MLX_LIB):
 endif
 
 # Compile mandatory object files
-$(OBJ_MANDATORY)/%.o: $(SRC_MANDATORY)/%.c
+$(OBJ_MANDATORY)/%.o: $(SRC_MANDATORY)/%.c $(INCLUDES_MANDATORY)
 	@$(MKDIR) $(dir $@)
 	@echo "$(YELLOW)Compiling mandatory $<...$(RESET)"
 	@$(CC) $(CFLAGS) $(MANDATORY_INCLUDES) -c $< -o $@
 
 # Compile bonus object files
-$(OBJ_BONUS)/%.o: $(SRC_BONUS)/%.c
+$(OBJ_BONUS)/%.o: $(SRC_BONUS)/%.c $(INCLUDES_BONUS)
 	@$(MKDIR) $(dir $@)
 	@echo "$(YELLOW)Compiling bonus $<...$(RESET)"
 	@$(CC) $(CFLAGS) $(BONUS_INCLUDES) -c $< -o $@
