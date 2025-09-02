@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map_statistics.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: mukibrok <mukibrok@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 19:48:57 by mukibrok          #+#    #+#             */
-/*   Updated: 2025/08/22 13:48:30 by gansari          ###   ########.fr       */
+/*   Updated: 2025/09/02 15:39:38 by mukibrok         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ int	scan_row(char *row, t_scan_data *data)
 				data->row, data->base + c);
 			(*data->player_count)++;
 		}
+		if (!is_character_valid(row[c], "10 \nNSEW"))
+			(*data->player_count)++;
 		c++;
 	}
 	return (c);
